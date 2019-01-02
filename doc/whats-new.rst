@@ -1,12 +1,12 @@
-.. currentmodule:: TEMPLATE
+.. currentmodule:: ndcsv
 
 What's New
 ==========
 
-.. _whats-new.0.1.0:
+.. _whats-new.1.0.0:
 
-v0.1.0 (TODO YYYY-MM-DD)
-------------------------
+v1.0.0 (Unreleased)
+-------------------
 
-Initial release.
-TODO add as needed
+- Open sourced and refactored from landg.idealcsv. Rewritten most of the code,
+  unit tests, and documentation. Fixed many bugs.

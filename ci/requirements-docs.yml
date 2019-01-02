@@ -1,11 +1,10 @@
-name: test_env
+name: ndcsv-docs
 channels:
   - defaults
   - conda-forge
 dependencies:
-  - python=3.7
-  - pytest
+  - python=3.6
+  - sphinx
+  - sphinx_rtd_theme
   - xarray
   - pshell
-  - coveralls
-  - pytest-cov

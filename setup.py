@@ -5,41 +5,40 @@ import warnings
 from setuptools import find_packages, setup
 
 
-MAJOR = 0
-MINOR = 1
+MAJOR = 1
+MINOR = 0
 MICRO = 0
 ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 QUALIFIER = ''
 
 
-DISTNAME = 'TEMPLATE'
+DISTNAME = 'ndcsv'
 LICENSE = 'Apache'
-AUTHOR = 'TODO'
-AUTHOR_EMAIL = 'TODO@TODO.com'
-URL = 'https://github.com/TODO/TEMPLATE'
+AUTHOR = 'Guido Imperiale'
+AUTHOR_EMAIL = 'crusaderky@gmail.com'
+URL = 'https://github.com/crusaderky/ndcsv'
 CLASSIFIERS = [
-    # TODO update choosing from
-    # https://pypi.org/pypi?%3Aaction=list_classifiers
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 5 - Production/Stable',
     'License :: OSI Approved :: Apache Software License',
     'Operating System :: OS Independent',
     'Intended Audience :: Science/Research',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Topic :: Scientific/Engineering',
 ]
 
 INSTALL_REQUIRES = [
-    # TODO your project dependencies here
-    # 'numpy >= 1.13',
+    'numpy >= 1.13',
+    'pandas >= 0.21',
+    'pshell >= 1.0',
+    'xarray >= 0.10.9',
 ]
-TESTS_REQUIRE = ['pytest >= 3.1']
+TESTS_REQUIRE = ['pytest >= 3.6']
 
-DESCRIPTION = "TEMPLATE"
+DESCRIPTION = "ndcsv"
 LONG_DESCRIPTION = """
 
 """  # noqa
@@ -67,10 +66,10 @@ if not ISRELEASED:
 
     if pipe is None or pipe.returncode != 0:
         # no git, or not in git dir
-        if os.path.exists('TEMPLATE/version.py'):
+        if os.path.exists('ndcsv/version.py'):
             warnings.warn(
                 "WARNING: Couldn't get git revision,"
-                " using existing TEMPLATE/version.py")
+                " using existing ndcsv/version.py")
             write_version = False
         else:
             warnings.warn(
@@ -105,7 +104,7 @@ short_version = '%s'
 """
     if not filename:
         filename = os.path.join(
-            os.path.dirname(__file__), 'TEMPLATE', 'version.py')
+            os.path.dirname(__file__), 'ndcsv', 'version.py')
 
     a = open(filename, 'w')
     try:
@@ -129,4 +128,4 @@ setup(name=DISTNAME,
       tests_require=TESTS_REQUIRE,
       url=URL,
       packages=find_packages(),
-      package_data={'TEMPLATE': ['tests/data/*']})
+      package_data={'ndcsv': ['tests/data/*']})

@@ -1,11 +1,11 @@
 name: test_env
 channels:
-  - anaconda
+  - defaults
+  - conda-forge
 dependencies:
   - python=3.6
-  - flake8
   - pytest
-  # TODO: add your own dependencies (no version)
-  - pip:
-    - coveralls
-    - pytest-cov
+  - xarray
+  - pshell
+  - coveralls
+  - pytest-cov
