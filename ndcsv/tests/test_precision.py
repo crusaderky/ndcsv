@@ -62,4 +62,3 @@ def test_precision():
     buf.seek(0)
     b = read_csv(buf)
     xarray.testing.assert_equal(a, b)
-

@@ -22,6 +22,7 @@ from ndcsv.tests.test_precision import (
 
 from ndcsv import write_csv, read_csv
 
+
 @pytest.mark.parametrize('data,txt', [
     (5, '5\n'),
     (5.2, '5.2\n'),
