@@ -38,7 +38,7 @@ def test_0d(data, txt):
     a = xarray.DataArray(data)
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         b = read_csv(buf)
@@ -69,7 +69,7 @@ def test_1d(data, txt):
     a = xarray.DataArray(data, dims=['x'], coords={'x': ['x1', 'x2']})
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         b = read_csv(buf)
@@ -90,7 +90,7 @@ def test_1d_multiindex():
 
     buf = io.StringIO()
     write_csv(b, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         c = read_csv(buf)
@@ -140,7 +140,7 @@ def test_2d(data, txt):
                          coords={'r': ['r1', 'r2'], 'c': ['c1', 'c2']})
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         b = read_csv(buf)
@@ -172,7 +172,7 @@ def test_2d_multiindex_cols(explicit_stack):
     else:
         write_csv(a, buf)
 
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         c = read_csv(buf)
@@ -209,7 +209,7 @@ def test_2d_multiindex_rows():
 
     buf = io.StringIO()
     write_csv(b, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         c = read_csv(buf)
@@ -245,7 +245,7 @@ def test_2d_multiindex_both(explicit_stack):
         write_csv(c, buf)
     else:
         write_csv(b, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         d = read_csv(buf)
@@ -268,7 +268,7 @@ def test_xarray_nocoords():
 
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         c = read_csv(buf)
@@ -309,7 +309,7 @@ def test_nonindex_coords(unstack):
            "20,40,2\n")
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     b = read_csv(buf, unstack=unstack)
     xarray.testing.assert_equal(a, b)
@@ -320,7 +320,7 @@ def test_shape1():
     a = xarray.DataArray([1], dims=['x'], coords={'x': ['x1']})
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == 'x,\nx1,1\n'
+    assert buf.getvalue().replace('\r', '') == 'x,\nx1,1\n'
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         b = read_csv(buf)
@@ -337,7 +337,7 @@ def test_duplicate_index():
 
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
         b = read_csv(buf)
@@ -358,7 +358,7 @@ def test_duplicate_index_multiindex():
 
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
 
     with patch_pandas_read_csv_assert_float_precision_high(read_csv):
