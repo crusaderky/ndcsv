@@ -4,15 +4,23 @@
 2. Verify that the output text buffer matches the format specs
 3. Call read_csv()
 4. Verify that the output xarray.DataArray matches the original array
+
+Enclose all `ndcsv.read_csv()` calls in the context manager
+`patch_pandas_read_csv_assert_float_precision_high`.  This is to check that
+`ndcsv.read_csv` always invoke `pandas.read_csv` with float_precision='high'.
 """
 import io
+
 import numpy as np
 from numpy import nan
 import pandas
 import pytest
 import xarray
-from ndcsv import write_csv, read_csv
 
+from ndcsv.tests.test_precision import (
+    patch_pandas_read_csv_assert_float_precision_high)
+
+from ndcsv import write_csv, read_csv
 
 @pytest.mark.parametrize('data,txt', [
     (5, '5\n'),
@@ -31,7 +39,8 @@ def test_0d(data, txt):
     write_csv(a, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    b = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        b = read_csv(buf)
     xarray.testing.assert_equal(a, b)
 
 
@@ -61,7 +70,8 @@ def test_1d(data, txt):
     write_csv(a, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    b = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        b = read_csv(buf)
     xarray.testing.assert_equal(a, b)
 
 
@@ -81,10 +91,12 @@ def test_1d_multiindex():
     write_csv(b, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    c = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        c = read_csv(buf)
     xarray.testing.assert_equal(c, a)
     buf.seek(0)
-    c = read_csv(buf, unstack=False)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        c = read_csv(buf, unstack=False)
     xarray.testing.assert_equal(c, b)
 
 
@@ -129,7 +141,8 @@ def test_2d(data, txt):
     write_csv(a, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    b = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        b = read_csv(buf)
     xarray.testing.assert_equal(a, b)
 
 
@@ -160,10 +173,12 @@ def test_2d_multiindex_cols(explicit_stack):
 
     assert buf.getvalue() == txt
     buf.seek(0)
-    c = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        c = read_csv(buf)
     xarray.testing.assert_equal(a, c)
     buf.seek(0)
-    c = read_csv(buf, unstack=False)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        c = read_csv(buf, unstack=False)
     xarray.testing.assert_equal(b, c)
 
 
@@ -195,10 +210,12 @@ def test_2d_multiindex_rows():
     write_csv(b, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    c = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        c = read_csv(buf)
     xarray.testing.assert_equal(a, c)
     buf.seek(0)
-    c = read_csv(buf, unstack=False)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        c = read_csv(buf, unstack=False)
     xarray.testing.assert_equal(b, c)
 
 
@@ -229,10 +246,12 @@ def test_2d_multiindex_both(explicit_stack):
         write_csv(b, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    d = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        d = read_csv(buf)
     xarray.testing.assert_equal(a, d)
     buf.seek(0)
-    d = read_csv(buf, unstack=False)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        d = read_csv(buf, unstack=False)
     xarray.testing.assert_equal(c, d)
 
 
@@ -250,7 +269,8 @@ def test_xarray_nocoords():
     write_csv(a, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    c = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        c = read_csv(buf)
     xarray.testing.assert_equal(b, c)
 
 
@@ -264,7 +284,8 @@ def test_numerical_ids1():
     buf = io.StringIO()
     write_csv(a, buf)
     buf.seek(0)
-    b = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        b = read_csv(buf)
     xarray.testing.assert_equal(a, b)
 
 
@@ -300,7 +321,8 @@ def test_shape1():
     write_csv(a, buf)
     assert buf.getvalue() == 'x,\nx1,1\n'
     buf.seek(0)
-    b = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        b = read_csv(buf)
     xarray.testing.assert_equal(a, b)
 
 
@@ -316,7 +338,8 @@ def test_duplicate_index():
     write_csv(a, buf)
     assert buf.getvalue() == txt
     buf.seek(0)
-    b = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        b = read_csv(buf)
     xarray.testing.assert_equal(a, b)
 
 
@@ -337,11 +360,13 @@ def test_duplicate_index_multiindex():
     assert buf.getvalue() == txt
     buf.seek(0)
 
-    b = read_csv(buf, unstack=False)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        b = read_csv(buf, unstack=False)
     xarray.testing.assert_equal(a, b)
 
     buf.seek(0)
     with pytest.raises(ValueError) as e:
-        read_csv(buf, unstack=True)
+        with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+            read_csv(buf, unstack=True)
     assert str(e.value) == ("cannot reindex or align along dimension 'dim_0' "
                             "because the index has duplicate values")

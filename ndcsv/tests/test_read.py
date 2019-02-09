@@ -1,18 +1,29 @@
 """Test edge cases that only require read_csv()
+
+Enclose all `ndcsv.read_csv()` calls in the context manager
+`patch_pandas_read_csv_assert_float_precision_high`.  This is to check that
+`ndcsv.read_csv` always invoke `pandas.read_csv` with float_precision='high'.
+
 Normal use cases are tested in :mod:`test_roundtrip`
 """
 import io
+
 import numpy as np
 import pandas
 import pytest
 import xarray
+
+from ndcsv.tests.test_precision import (
+    patch_pandas_read_csv_assert_float_precision_high)
+
 from ndcsv import read_csv
 
 
 def test_malformed_input():
     buf = io.StringIO("foo,bar,baz")
     with pytest.raises(ValueError) as e:
-        read_csv(buf)
+        with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+            read_csv(buf)
     assert str(e.value) == "Malformed N-dimensional CSV"
 
 
@@ -24,7 +35,8 @@ def test_coords_dtypes(unstack):
                       "y1,y2,,,\n"
                       "1.5,s2,10,20,30\n"
                       "1.7,003,10,20,30")
-    a = read_csv(buf, unstack=unstack)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(buf, unstack=unstack)
     if not unstack:
         # Manually unstack
         a = a.unstack('dim_1')
@@ -46,7 +58,8 @@ def test_coords_bool():
                       "Yes,No,yes,no,T,F,T,F\n"
                       "x\n"
                       "x0" + ",1" * 20 + "\n")
-    a = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(buf)
     assert a.y.values.tolist() == [True, False] * 10
 
 
@@ -54,7 +67,8 @@ def test_coords_date():
     buf = io.StringIO("y,10/11/2017,2017-11-10\n"
                       "x,,\n"
                       "x0,1,2\n")
-    a = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(buf)
     np.testing.assert_equal(
         pandas.to_datetime(['10 Nov 2017', '10 Nov 2017']).values,
         a.coords['y'].values)
@@ -70,7 +84,8 @@ def test_2d_onecol_nomultiindex():
                       "0.22,22.22\n"
                       "0.33,33.33\n"
                       "1.0,100.0")
-    a = read_csv(buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(buf)
     b = xarray.DataArray(
         [[0.0], [11.11], [22.22], [33.33], [100.0]],
         dims=['percentile', 'riskfactor'],
@@ -89,7 +104,8 @@ def test_2d_onecol_multiindex():
                           "S001,0.22,22.22\n"
                           "S001,0.33,33.33\n"
                           "S001,1.0,100.0")
-    a = read_csv(csv_buf)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(csv_buf)
     b = xarray.DataArray(
         [[[0.0, 11.11, 22.22, 33.33, 100.0]]],
         dims=['riskfactor', 'id', 'percentile'],
@@ -107,7 +123,8 @@ def test_ambiguous_nonindex_coords():
                       "0,0,0,1\n"
                       "0,1,1,1\n")
     with pytest.raises(ValueError) as e:
-        read_csv(buf)
+        with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+            read_csv(buf)
     assert str(e.value) == ("Non-index coord z (x) has different values for "
                             "the same value of its dimension x")
 
@@ -119,7 +136,8 @@ def test_nonindex_coords_with_multiindex(unstack):
                       "x1,y2,z1,2\n"
                       "x2,y1,z2,3\n"
                       "x2,y2,z2,4\n")
-    a = read_csv(buf, unstack=unstack)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(buf, unstack=unstack)
     if unstack:
         b = xarray.DataArray(
             [[1, 2], [3, 4]], dims=['x', 'y'],
@@ -153,7 +171,8 @@ def test_missing_index_coord1(unstack):
                       "20,2\n")
     b = xarray.DataArray([1, 2], dims=['x'],
                          coords={'y': ('x', [10, 20])})
-    a = read_csv(buf, unstack=unstack)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(buf, unstack=unstack)
     xarray.testing.assert_equal(a, b)
 
 
@@ -168,5 +187,6 @@ def test_missing_index_coord2(unstack):
     b = xarray.DataArray([1, 2], dims=['x'],
                          coords={'y': ('x', [10, 20]),
                                  'z': ('x', [30, 40])})
-    a = read_csv(buf, unstack=unstack)
+    with patch_pandas_read_csv_assert_float_precision_high(read_csv):
+        a = read_csv(buf, unstack=unstack)
     xarray.testing.assert_equal(a, b)
