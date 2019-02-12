@@ -12,7 +12,7 @@ def test_write_dataframe():
     buf = io.StringIO()
     write_csv(a, buf)
     print(buf.getvalue())
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
 
     # add index/columns labels
     a.index = ['i1', 'i2']
@@ -23,7 +23,7 @@ def test_write_dataframe():
            "i2,4,5,6\n")
     buf = io.StringIO()
     write_csv(a, buf)
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
 
     # add index/columns names
     a.index.name = 'r'
@@ -35,7 +35,7 @@ def test_write_dataframe():
     buf = io.StringIO()
     write_csv(a, buf)
     print(buf.getvalue())
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
 
 
 def test_write_series():
@@ -46,7 +46,7 @@ def test_write_series():
     buf = io.StringIO()
     write_csv(a, buf)
     print(buf.getvalue())
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
 
     # add index labels
     a.index = ['i1', 'i2']
@@ -56,7 +56,7 @@ def test_write_series():
     buf = io.StringIO()
     write_csv(a, buf)
     print(buf.getvalue())
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
 
     # add index/columns names
     a.index.name = 'r'
@@ -66,4 +66,4 @@ def test_write_series():
     buf = io.StringIO()
     write_csv(a, buf)
     print(buf.getvalue())
-    assert buf.getvalue() == txt
+    assert buf.getvalue().replace('\r', '') == txt
