@@ -9,6 +9,8 @@ v1.1.0 (Unreleased)
 -------------------
 
 - Fixed unit tests on Windows vs. pandas-0.24 `Jacob Lin`_
+- Fixed noise when reading floats; e.g. "0.9988" was being read as
+  0.9998799999999999 `Jacob Lin`_
 
 
 .. _whats-new.1.0.0:

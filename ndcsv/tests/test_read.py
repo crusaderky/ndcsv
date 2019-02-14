@@ -170,3 +170,29 @@ def test_missing_index_coord2(unstack):
                                  'z': ('x', [30, 40])})
     a = read_csv(buf, unstack=unstack)
     xarray.testing.assert_equal(a, b)
+
+
+@pytest.mark.parametrize('txt', [
+    '0.99988\n',
+    'x,\nx1,0.99988\n',
+    'c,c1\nr,\nr1,0.99988\n',
+])
+def test_float_precision(txt):
+    """Test that when ndcsv.read_csv() calls pandas.read_csv(), the argument
+    float_precision='high' is used.  This is to combat the below behaviour::
+
+        >>> pandas.read_csv(io.StringIO('x\n0.99988\n'),
+        ...                 squeeze=True)[0]
+        0.9998799999999999
+        >>> pandas.read_csv(io.StringIO('x\n0.99988\n'),
+        ...                 squeeze=True,
+        ...                 float_precision='high')[0]
+        0.99988
+
+    The ndcsv.read_csv() calls pandas.read_csv() in three different ways,
+    depending on the number of header rows -- no header row, one header
+    row, and more than one header rows.  The precision tests in this module
+    are organised in the same manner.
+    """
+    buf = io.StringIO(txt)
+    assert read_csv(buf).values.ravel()[0] == 0.99988

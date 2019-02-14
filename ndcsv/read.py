@@ -137,7 +137,8 @@ def _buf_to_xarray(buf):
         if len(rows) == 1 and len(rows[0]) == 1:
             # 0-dimensional file
             # Let pandas.read_csv() apply its magic type detection
-            df = pandas.read_csv(io.StringIO(rows[0][0]), header=None)
+            df = pandas.read_csv(io.StringIO(rows[0][0]), header=None,
+                                 float_precision='high')
             return xarray.DataArray(df.iloc[0, 0])
         else:
             raise ValueError("Malformed N-dimensional CSV")
@@ -155,7 +156,8 @@ def _buf_to_xarray(buf):
     # passed a header
     if len(header) == 1 and len(indexes) > 0:
         df = pandas.read_csv(buf, index_col=index_col, header=None,
-                             low_memory=False, skiprows=2)
+                             low_memory=False, skiprows=2,
+                             float_precision='high')
         df.index.names = indexes
         df.columns = columns[num_index_col:]
         df.columns.names = [columns[0]]
@@ -164,7 +166,7 @@ def _buf_to_xarray(buf):
         if len(header) == 1:
             header = header[0]
         df = pandas.read_csv(buf, index_col=index_col, header=header,
-                             low_memory=False)
+                             low_memory=False, float_precision='high')
 
     if len(indexes) == 0:
         # If originally a Series, squeeze empty df dim
