@@ -2,16 +2,22 @@
 
 See :doc:`format` for format specs
 """
-import io
+from __future__ import annotations
+
 import csv
+import io
 import re
+from collections.abc import Hashable
+from typing import TextIO, cast
+
 import pandas
 import pshell as sh
-import xarray
+from xarray import DataArray
+
 from .proper_unstack import proper_unstack
 
 
-def read_csv(path_or_buf, unstack=True):
+def read_csv(path_or_buf: str | TextIO, unstack: bool = True) -> DataArray:
     """Parse an NDCSV file into a :class:`xarray.DataArray`.
 
     This function is conceptually similar to :func:`pandas.read_csv`, except
@@ -39,34 +45,34 @@ def read_csv(path_or_buf, unstack=True):
         Set to False to return the stacked dimensions as they appear in
         the CSV file.
     :returns:
-        xarray.DataArray
+        :class:`xarray.DataArray`
     """
     if isinstance(path_or_buf, str):
         with sh.open(path_or_buf) as fh:
-            return read_csv(fh, unstack=unstack)
+            return read_csv(cast(TextIO, fh), unstack=unstack)
 
     xa = _buf_to_xarray(path_or_buf)
     assert xa.ndim in (0, 1, 2)
-    # print("==== _buf_to_array:\n%s" % xa)
+    # print(f"==== _buf_to_array:\n{xa}")
 
     xa = _coords_format_conversion(xa)
     assert xa.ndim in (0, 1, 2)
-    # print("==== _coords_format_conversion:\n%s" % xa)
+    # print(f"==== _coords_format_conversion:\n{xa}")
 
     if xa.ndim == 1:
         xa = _unpack(xa, xa.dims[0], unstack)
-        # print("==== _unpack(dim_0):\n%s" % xa)
+        # print(f"==== _unpack(dim_0):\n{xa}")
     elif xa.ndim == 2:
         dims = xa.dims
         xa = _unpack(xa, dims[0], unstack)
-        # print("==== _unpack(dim_0):\n%s" % xa)
+        # print(f"==== _unpack(dim_0):\n{xa}")
         xa = _unpack(xa, dims[1], unstack)
-        # print("==== _unpack(dim_1):\n%s" % xa)
+        # print(f"==== _unpack(dim_1):\n{xa}")
 
     return xa
 
 
-def _buf_to_xarray(buf):
+def _buf_to_xarray(buf: TextIO) -> DataArray:
     """Step 1 of read_csv().
     Read text buffer object and convert it to a :class:`xarray.DataArray`.
 
@@ -82,16 +88,16 @@ def _buf_to_xarray(buf):
     reader = csv.reader(buf)
 
     # Store header rows (only). Won't read the whole file with csv.reader.
-    rows = []
-    columns = []
-    indexes = []
+    rows: list[list[str]] = []
+    columns: list = []
+    indexes: list = []
     num_index_col = None
 
     for row in reader:
         # Remove empty cells to the right and whitespaces
         # at beginning and end of every cell
         row = [cell.strip() for cell in row]
-        while row[-1] == '':
+        while row[-1] == "":
             del row[-1]
 
         rows.append(row)
@@ -106,7 +112,7 @@ def _buf_to_xarray(buf):
             # This is a pandas.DataFrame
             # Do we have a MultiIndex on the rows?
             try:
-                num_index_col = rows[0].index('') + 1
+                num_index_col = rows[0].index("") + 1
             except ValueError:
                 # No MultiIndex on the rows
                 num_index_col = 1
@@ -137,9 +143,10 @@ def _buf_to_xarray(buf):
         if len(rows) == 1 and len(rows[0]) == 1:
             # 0-dimensional file
             # Let pandas.read_csv() apply its magic type detection
-            df = pandas.read_csv(io.StringIO(rows[0][0]), header=None,
-                                 float_precision='high')
-            return xarray.DataArray(df.iloc[0, 0])
+            df = pandas.read_csv(
+                io.StringIO(rows[0][0]), header=None, float_precision="high"
+            )
+            return DataArray(df.iloc[0, 0])
         else:
             raise ValueError("Malformed N-dimensional CSV")
 
@@ -147,26 +154,31 @@ def _buf_to_xarray(buf):
     # This is much faster than csv.reader and also applies pandas
     # automatic type recognition.
     buf.seek(0)
-    index_col = list(range(num_index_col))
-    if len(index_col) == 1:
-        index_col = index_col[0]
+    index_col = 0 if num_index_col == 1 else list(range(num_index_col))
     header = list(range(num_header_rows))
 
     # If no MultiIndex on columns and it's not a Series, read_csv should not be
     # passed a header
     if len(header) == 1 and len(indexes) > 0:
-        df = pandas.read_csv(buf, index_col=index_col, header=None,
-                             low_memory=False, skiprows=2,
-                             float_precision='high')
+        df = pandas.read_csv(
+            buf,
+            index_col=index_col,
+            header=None,
+            low_memory=False,
+            skiprows=2,
+            float_precision="high",
+        )
         df.index.names = indexes
         df.columns = columns[num_index_col:]
-        df.columns.names = [columns[0]]
+        df.columns.names = [columns[0]]  # type: ignore
     else:
-        # Pandas can figure out headers
-        if len(header) == 1:
-            header = header[0]
-        df = pandas.read_csv(buf, index_col=index_col, header=header,
-                             low_memory=False, float_precision='high')
+        df = pandas.read_csv(
+            buf,
+            index_col=index_col,
+            header=header[0] if len(header) == 1 else header,
+            low_memory=False,
+            float_precision="high",
+        )
 
     if len(indexes) == 0:
         # If originally a Series, squeeze empty df dim
@@ -174,12 +186,12 @@ def _buf_to_xarray(buf):
         # into a scalar, whereas we always want a Series.
         df = df.iloc[:, 0]
 
-    xa = xarray.DataArray(df)
+    xa = DataArray(df)
     xa.name = None
     return xa
 
 
-def _coords_format_conversion(xa):
+def _coords_format_conversion(xa: DataArray) -> DataArray:
     """Automated format conversion for coords
 
     For every coord (either inside or outside of a MultiIndex), auto-convert
@@ -200,11 +212,11 @@ def _coords_format_conversion(xa):
         # Convert numpy array of objects, as loaded by pandas, to array of
         # int, float, etc.
         xa.coords[k] = v.dims, v.values.tolist()
-        v = xa.coords[k].values
-        v = _try_to_date(v)
-        v = _try_to_numeric(v)
-        v = _try_to_bool(v)
-        xa.coords[k] = xa.coords[k].dims, v
+        v_data = xa.coords[k].values
+        v_data = _try_to_date(v_data)
+        v_data = _try_to_numeric(v_data)
+        v_data = _try_to_bool(v_data)
+        xa.coords[k] = xa.coords[k].dims, v_data
     return xa
 
 
@@ -213,7 +225,7 @@ def _try_to_date(x):
     the input unaltered if it's not a date.
     Don't attempt converting numeric or boolean arrays.
     """
-    if x.dtype.kind != 'U':  # unicode string
+    if x.dtype.kind != "U":  # unicode string
         return x
     try:
         # In case of ambiguity, prefer European format DD/MM/YYYY to the
@@ -236,7 +248,7 @@ def _try_to_numeric(x):
 
       [_try_to_numeric(x) for x in v]
     """
-    if x.dtype.kind != 'U':  # Unicode string
+    if x.dtype.kind != "U":  # Unicode string
         return x
     try:
         return pandas.to_numeric(x)
@@ -245,8 +257,14 @@ def _try_to_numeric(x):
 
 
 _BOOL_MAP = {
-    'T': True, 'Y': True, 'YES': True, 'TRUE': True,
-    'F': False, 'N': False, 'NO': False, 'FALSE': False,
+    "T": True,
+    "Y": True,
+    "YES": True,
+    "TRUE": True,
+    "F": False,
+    "N": False,
+    "NO": False,
+    "FALSE": False,
 }
 
 
@@ -254,7 +272,7 @@ def _try_to_bool(x):
     """Attempt converting an array of strings into an array of bools. Return
     the original, unaltered array if any element fails conversion.
     """
-    if x.dtype.kind != 'U':  # Unicode string
+    if x.dtype.kind != "U":  # Unicode string
         return x
     try:
         return [_BOOL_MAP[i.upper()] for i in x.tolist()]
@@ -262,7 +280,7 @@ def _try_to_bool(x):
         return x
 
 
-def _unpack(xa, dim, unstack=True):
+def _unpack(xa: DataArray, dim: Hashable, unstack: bool = True) -> DataArray:
     """Deal with MultiIndex and non-index coords
 
     :param DataArray xa:
@@ -282,7 +300,7 @@ def _unpack(xa, dim, unstack=True):
         assert len(v.dims) == 1
         if v.dims[0] == dim:
             # Non-index coords are formatted as `name (dim)`
-            m = re.match(r'(.+) \((.+)\)$', k)
+            m = re.match(r"(.+) \((.+)\)$", k)
             if m:
                 coord_name, coord_dim = m.group(1), m.group(2)
                 # Non-index coordinate
@@ -300,24 +318,28 @@ def _unpack(xa, dim, unstack=True):
     # Leave non-index coordinates out
     if len(dims) > 1:
         # Unstack MultiIndex, using a first-seen order
-        xa = xa.set_index({dim: index_coords})
+        xa = xa.set_index({dim: index_coords})  # type: ignore
         if unstack:
             xa = proper_unstack(xa, dim)
             # Now non-index coords will have become multi-dimensional
             # Drop extra dims if there is no ambiguity, otherwise raise error
             for coord, coord_dim in nonindex_coords:
                 cvalue = xa.coords[coord]
-                slice0 = cvalue.isel(**{
-                    other_dim: 0
-                    for other_dim in cvalue.dims
-                    if other_dim != coord_dim
-                }, drop=True)
+                slice0 = cvalue.isel(
+                    {
+                        other_dim: 0
+                        for other_dim in cvalue.dims
+                        if other_dim != coord_dim
+                    },
+                    drop=True,
+                )
                 if (cvalue == slice0).all():
                     xa.coords[coord] = slice0
                 else:
-                    raise ValueError("Non-index coord %s has different "
-                                     "values for the same value of its "
-                                     "dimension %s" % (coord, coord_dim))
+                    raise ValueError(
+                        f"Non-index coord {coord} has different values for the same "
+                        f"value of its dimension {coord_dim}"
+                    )
         # Finally rename non-index coords
         xa = xa.rename(rename_map)
 
