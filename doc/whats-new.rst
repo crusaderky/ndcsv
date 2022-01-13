@@ -11,12 +11,12 @@ v1.1.0 (Unreleased)
 - Bumped minimum version of dependencies:
 
   ========== ====== =====
-  Dependency 1.0.0  1.1.1
+  Dependency 1.0.0  1.1.0
   ========== ====== =====
   python     3.6    3.7
-  numpy
-  pandas     0.21   0.23
-  xarray     0.10.9 0.11
+  numpy      1.13   1.14
+  pandas     0.21   0.24
+  xarray     0.10.9 0.14
   ========== ====== =====
 
 - Added support for Python 3.8, 3.9, and 3.10
