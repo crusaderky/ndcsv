@@ -1,12 +1,12 @@
+import pkg_resources
+
+from .read import read_csv
+from .write import write_csv
+
 try:
-    from .version import version as __version__  # noqa: F401
-except ImportError:  # pragma: no cover
-    raise ImportError('ndcsv not properly installed. If you are running '
-                      'from the source directory, please instead '
-                      'create a new virtual environment (using conda or '
-                      'virtualenv) and then install it in-place by running: '
-                      'pip install -e .')
+    __version__ = pkg_resources.get_distribution("ndcsv").version
+except Exception:  # pragma: nocover
+    # Local copy, not installed with setuptools
+    __version__ = "999"
 
-
-from .read import read_csv  # noqa: F401
-from .write import write_csv  # noqa: F401
+__all__ = ("__version__", "read_csv", "write_csv")

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # documentation build configuration file, created by
 # sphinx-quickstart on Thu Feb  6 18:57:54 2014.
 #
@@ -13,14 +11,8 @@
 # serve to show the default.
 import datetime
 import os
-import sys
 import ndcsv
 
-
-allowed_failures = set()
-
-print("python exec:", sys.executable)
-print("sys.path:", sys.path)
 
 # -- General configuration ------------------------------------------------
 
@@ -36,9 +28,6 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
-    #'numpydoc',
-    #'IPython.sphinxext.ipython_directive',
-    #'IPython.sphinxext.ipython_console_highlighting',
 ]
 
 extlinks = {
@@ -47,10 +36,6 @@ extlinks = {
 }
 
 autosummary_generate = True
-
-# numpydoc settings
-#numpydoc_class_members_toctree = True
-#numpydoc_show_class_members = False
 
 # Add any paths that contain ndcsvs here, relative to this directory.
 ndcsvs_path = ['_ndcsvs']
@@ -73,7 +58,7 @@ copyright = '2018-%s, ndcsv Developers' % datetime.datetime.now().year
 # built documents.
 #
 # The short X.Y version.
-version = ndcsv.version.short_version
+version = ndcsv.__version__.split("+")[0]
 # The full version, including alpha/beta/rc tags.
 release = ndcsv.__version__
 

@@ -1,10 +1,10 @@
-name: ndcsv-docs
+name: ndcsv
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - sphinx=3
-  - sphinx_rtd_theme
+  - pytest
+  - coverage
   - numpy
   - pandas
   - pshell

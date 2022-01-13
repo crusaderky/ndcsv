@@ -1,13 +1,12 @@
-name: test_env
+name: ndcsv-minimal
 channels:
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
-  - python=3.6
-  - pytest=3.6
+  - python=3.7
+  - pytest
+  - coverage
   - numpy=1.13
   - pandas=0.21.0
   - pshell=1.0
   - xarray=0.10.9
-  - coveralls
-  - pytest-cov
