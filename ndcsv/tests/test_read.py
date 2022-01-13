@@ -57,7 +57,7 @@ def test_coords_bool():
 
 
 def test_coords_date():
-    buf = io.StringIO("y,10/11/2017,2017-11-10\n" "x,,\n" "x0,1,2\n")
+    buf = io.StringIO("y,10/11/2017,2017-11-10\nx,,\nx0,1,2\n")
     a = read_csv(buf)
     np.testing.assert_equal(
         pandas.to_datetime(["10 Nov 2017", "10 Nov 2017"]).values, a.coords["y"].values
@@ -112,7 +112,7 @@ def test_ambiguous_nonindex_coords():
     """Test when non-index coords have multiple values for the matching
     index coord
     """
-    buf = io.StringIO("x,y,z (x),\n" "0,0,0,1\n" "0,1,1,1\n")
+    buf = io.StringIO("x,y,z (x),\n0,0,0,1\n0,1,1,1\n")
     with pytest.raises(ValueError) as e:
         read_csv(buf)
     assert str(e.value) == (
@@ -124,7 +124,7 @@ def test_ambiguous_nonindex_coords():
 @pytest.mark.parametrize("unstack", [False, True])
 def test_nonindex_coords_with_multiindex(unstack):
     buf = io.StringIO(
-        "x,y,z (x),\n" "x1,y1,z1,1\n" "x1,y2,z1,2\n" "x2,y1,z2,3\n" "x2,y2,z2,4\n"
+        "x,y,z (x),\nx1,y1,z1,1\nx1,y2,z1,2\nx2,y1,z2,3\nx2,y2,z2,4\n"
     )
     a = read_csv(buf, unstack=unstack)
     if unstack:
@@ -158,7 +158,7 @@ def test_missing_index_coord1(unstack):
     """The index coord may be missing as long as matching non-index coord(s)
     spell out the dim name
     """
-    buf = io.StringIO("y (x),\n" "10,1\n" "20,2\n")
+    buf = io.StringIO("y (x),\n10,1\n20,2\n")
     b = xarray.DataArray([1, 2], dims=["x"], coords={"y": ("x", [10, 20])})
     a = read_csv(buf, unstack=unstack)
     xarray.testing.assert_equal(a, b)
@@ -169,7 +169,7 @@ def test_missing_index_coord2(unstack):
     """Same as above, but with 2 non-index coords which will instigate
     pandas to create a MultiIndex
     """
-    buf = io.StringIO("y (x),z (x),\n" "10,30,1\n" "20,40,2\n")
+    buf = io.StringIO("y (x),z (x),\n10,30,1\n20,40,2\n")
     b = xarray.DataArray(
         [1, 2], dims=["x"], coords={"y": ("x", [10, 20]), "z": ("x", [30, 40])}
     )

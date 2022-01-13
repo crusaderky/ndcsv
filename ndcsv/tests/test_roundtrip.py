@@ -43,12 +43,12 @@ def test_0d(data, txt):
 @pytest.mark.parametrize(
     "data,txt",
     [
-        ([1, 2], "x,\n" "x1,1\n" "x2,2\n"),
-        ([0.0, nan], "x,\n" "x1,0.0\n" "x2,\n"),
-        ([nan, 0.0], "x,\n" "x1,nan\n" "x2,0.0\n"),
-        ([nan, nan], "x,\n" "x1,nan\n" "x2,nan\n"),
-        ([True, False], "x,\n" "x1,True\n" "x2,False\n"),
-        (["foo", "bar"], "x,\n" "x1,foo\n" "x2,bar\n"),
+        ([1, 2], "x,\nx1,1\nx2,2\n"),
+        ([0.0, nan], "x,\nx1,0.0\nx2,\n"),
+        ([nan, 0.0], "x,\nx1,nan\nx2,0.0\n"),
+        ([nan, nan], "x,\nx1,nan\nx2,nan\n"),
+        ([True, False], "x,\nx1,True\nx2,False\n"),
+        (["foo", "bar"], "x,\nx1,foo\nx2,bar\n"),
     ],
 )
 def test_1d(data, txt):
@@ -66,7 +66,7 @@ def test_1d_multiindex():
         [[1, 2], [3, 4]], dims=["r", "c"], coords={"r": [10, 20], "c": [30, 40]}
     )
     b = a.stack(dim_0=["r", "c"])
-    txt = "r,c,\n" "10,30,1\n" "10,40,2\n" "20,30,3\n" "20,40,4\n"
+    txt = "r,c,\n10,30,1\n10,40,2\n20,30,3\n20,40,4\n"
 
     buf = io.StringIO()
     write_csv(b, buf)
@@ -82,16 +82,16 @@ def test_1d_multiindex():
 @pytest.mark.parametrize(
     "data,txt",
     [
-        ([[1, 2], [3, 4]], "c,c1,c2\n" "r,,\n" "r1,1,2\n" "r2,3,4\n"),
-        ([[nan, 2], [3, 4]], "c,c1,c2\n" "r,,\n" "r1,,2.0\n" "r2,3.0,4.0\n"),
-        ([[1, nan], [3, 4]], "c,c1,c2\n" "r,,\n" "r1,1.0,\n" "r2,3.0,4.0\n"),
-        ([[nan, nan], [3, 4]], "c,c1,c2\n" "r,,\n" "r1,,\n" "r2,3.0,4.0\n"),
-        ([[1, 2], [nan, nan]], "c,c1,c2\n" "r,,\n" "r1,1.0,2.0\n" "r2,,\n"),
-        ([[nan, nan], [nan, nan]], "c,c1,c2\n" "r,,\n" "r1,,\n" "r2,,\n"),
-        ([["x", "y"], ["w", "z"]], "c,c1,c2\n" "r,,\n" "r1,x,y\n" "r2,w,z\n"),
+        ([[1, 2], [3, 4]], "c,c1,c2\nr,,\nr1,1,2\nr2,3,4\n"),
+        ([[nan, 2], [3, 4]], "c,c1,c2\nr,,\nr1,,2.0\nr2,3.0,4.0\n"),
+        ([[1, nan], [3, 4]], "c,c1,c2\nr,,\nr1,1.0,\nr2,3.0,4.0\n"),
+        ([[nan, nan], [3, 4]], "c,c1,c2\nr,,\nr1,,\nr2,3.0,4.0\n"),
+        ([[1, 2], [nan, nan]], "c,c1,c2\nr,,\nr1,1.0,2.0\nr2,,\n"),
+        ([[nan, nan], [nan, nan]], "c,c1,c2\nr,,\nr1,,\nr2,,\n"),
+        ([["x", "y"], ["w", "z"]], "c,c1,c2\nr,,\nr1,x,y\nr2,w,z\n"),
         (
             [[True, False], [False, True]],
-            "c,c1,c2\n" "r,,\n" "r1,True,False\n" "r2,False,True\n",
+            "c,c1,c2\nr,,\nr1,True,False\nr2,False,True\n",
         ),
     ],
 )
@@ -230,7 +230,7 @@ def test_xarray_nocoords():
     b = a.copy()
     b.coords["r"] = [0, 1]
     b.coords["c"] = [0, 1]
-    txt = "c,0,1\n" "r,,\n" "0,1,2\n" "1,3,4\n"
+    txt = "c,0,1\nr,,\n0,1,2\n1,3,4\n"
 
     buf = io.StringIO()
     write_csv(a, buf)
@@ -268,7 +268,7 @@ def test_nonindex_coords(unstack):
     a = xarray.DataArray(
         [1, 2], dims=["x"], coords={"x": [10, 20], "y": ("x", [30, 40])}
     )
-    txt = "x,y (x),\n" "10,30,1\n" "20,40,2\n"
+    txt = "x,y (x),\n10,30,1\n20,40,2\n"
     buf = io.StringIO()
     write_csv(a, buf)
     assert buf.getvalue().replace("\r", "") == txt
@@ -291,7 +291,7 @@ def test_shape1():
 def test_duplicate_index():
     """Duplicate indices are OK as long as you don't try unstacking"""
     a = xarray.DataArray([1, 2], dims=["x"], coords={"x": [10, 10]})
-    txt = "x,\n" "10,1\n" "10,2\n"
+    txt = "x,\n10,1\n10,2\n"
 
     buf = io.StringIO()
     write_csv(a, buf)
@@ -326,7 +326,7 @@ def test_duplicate_index_multiindex(unstack):
         },
     )
 
-    txt = "x,y,\n" "10,10,1\n" "10,10,2\n"
+    txt = "x,y,\n10,10,1\n10,10,2\n"
 
     buf = io.StringIO()
     write_csv(a, buf)

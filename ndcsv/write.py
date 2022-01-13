@@ -64,7 +64,7 @@ def write_csv(
         _write_csv_pandas(array, path_or_buf)
     else:
         raise TypeError(
-            "Input data is not a xarray.DataArray, pandas.Series " "or pandas.DataFrame"
+            "Input data is not a xarray.DataArray, pandas.Series or pandas.DataFrame"
         )
 
 

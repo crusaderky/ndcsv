@@ -18,7 +18,7 @@ from .proper_unstack import proper_unstack
 
 
 def read_csv(path_or_buf: str | TextIO, unstack: bool = True) -> DataArray:
-    """Parse an NDCSV file into a :class:`DataArray`.
+    """Parse an NDCSV file into a :class:`xarray.DataArray`.
 
     This function is conceptually similar to :func:`pandas.read_csv`, except
     that it only works for files that are strictly formatted according to
@@ -37,7 +37,7 @@ def read_csv(path_or_buf: str | TextIO, unstack: bool = True) -> DataArray:
     :param bool unstack:
         Set to True (the default) to automatically unstack any and all stacked
         dimensions in the output xarray, using first-seen order. Note that this
-        differs from :meth:`DataArray.unstack`, which may occasionally
+        differs from :meth:`xarray.DataArray.unstack`, which may occasionally
         use alphabetical order instead.
         All indices must be unique for the unstack to succeed. Non-index coords
         can be duplicated.
@@ -45,7 +45,7 @@ def read_csv(path_or_buf: str | TextIO, unstack: bool = True) -> DataArray:
         Set to False to return the stacked dimensions as they appear in
         the CSV file.
     :returns:
-        DataArray
+        :class:`xarray.DataArray`
     """
     if isinstance(path_or_buf, str):
         with sh.open(path_or_buf) as fh:
@@ -74,7 +74,7 @@ def read_csv(path_or_buf: str | TextIO, unstack: bool = True) -> DataArray:
 
 def _buf_to_xarray(buf: TextIO) -> DataArray:
     """Step 1 of read_csv().
-    Read text buffer object and convert it to a :class:`DataArray`.
+    Read text buffer object and convert it to a :class:`xarray.DataArray`.
 
     - the Array always has 0, 1, or 2 dimensions
     - in case of MultiIndex, dims are arbitrarily labelled dim0, dim1
