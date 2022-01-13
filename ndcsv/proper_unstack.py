@@ -3,6 +3,7 @@
 This module is copy-pasted from xarray-extras
 """
 from collections import OrderedDict
+
 import pandas
 
 
@@ -49,7 +50,7 @@ def proper_unstack(array, dim):
     # Convert numpy arrays of Python objects to numpy arrays of C floats, ints,
     # strings, etc.
     for dim in mindex.names:
-        if array.coords[dim].dtype.kind == 'O':
+        if array.coords[dim].dtype.kind == "O":
             array.coords[dim] = array.coords[dim].values.tolist()
 
     return array

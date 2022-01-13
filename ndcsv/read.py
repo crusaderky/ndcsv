@@ -2,12 +2,14 @@
 
 See :doc:`format` for format specs
 """
-import io
 import csv
+import io
 import re
+
 import pandas
 import pshell as sh
 import xarray
+
 from .proper_unstack import proper_unstack
 
 
@@ -47,21 +49,21 @@ def read_csv(path_or_buf, unstack=True):
 
     xa = _buf_to_xarray(path_or_buf)
     assert xa.ndim in (0, 1, 2)
-    # print("==== _buf_to_array:\n%s" % xa)
+    # print(f"==== _buf_to_array:\n{xa}")
 
     xa = _coords_format_conversion(xa)
     assert xa.ndim in (0, 1, 2)
-    # print("==== _coords_format_conversion:\n%s" % xa)
+    # print(f"==== _coords_format_conversion:\n{xa}")
 
     if xa.ndim == 1:
         xa = _unpack(xa, xa.dims[0], unstack)
-        # print("==== _unpack(dim_0):\n%s" % xa)
+        # print(f"==== _unpack(dim_0):\n{xa}")
     elif xa.ndim == 2:
         dims = xa.dims
         xa = _unpack(xa, dims[0], unstack)
-        # print("==== _unpack(dim_0):\n%s" % xa)
+        # print(f"==== _unpack(dim_0):\n{xa}")
         xa = _unpack(xa, dims[1], unstack)
-        # print("==== _unpack(dim_1):\n%s" % xa)
+        # print(f"==== _unpack(dim_1):\n{xa}")
 
     return xa
 
@@ -91,7 +93,7 @@ def _buf_to_xarray(buf):
         # Remove empty cells to the right and whitespaces
         # at beginning and end of every cell
         row = [cell.strip() for cell in row]
-        while row[-1] == '':
+        while row[-1] == "":
             del row[-1]
 
         rows.append(row)
@@ -106,7 +108,7 @@ def _buf_to_xarray(buf):
             # This is a pandas.DataFrame
             # Do we have a MultiIndex on the rows?
             try:
-                num_index_col = rows[0].index('') + 1
+                num_index_col = rows[0].index("") + 1
             except ValueError:
                 # No MultiIndex on the rows
                 num_index_col = 1
@@ -137,8 +139,9 @@ def _buf_to_xarray(buf):
         if len(rows) == 1 and len(rows[0]) == 1:
             # 0-dimensional file
             # Let pandas.read_csv() apply its magic type detection
-            df = pandas.read_csv(io.StringIO(rows[0][0]), header=None,
-                                 float_precision='high')
+            df = pandas.read_csv(
+                io.StringIO(rows[0][0]), header=None, float_precision="high"
+            )
             return xarray.DataArray(df.iloc[0, 0])
         else:
             raise ValueError("Malformed N-dimensional CSV")
@@ -155,9 +158,14 @@ def _buf_to_xarray(buf):
     # If no MultiIndex on columns and it's not a Series, read_csv should not be
     # passed a header
     if len(header) == 1 and len(indexes) > 0:
-        df = pandas.read_csv(buf, index_col=index_col, header=None,
-                             low_memory=False, skiprows=2,
-                             float_precision='high')
+        df = pandas.read_csv(
+            buf,
+            index_col=index_col,
+            header=None,
+            low_memory=False,
+            skiprows=2,
+            float_precision="high",
+        )
         df.index.names = indexes
         df.columns = columns[num_index_col:]
         df.columns.names = [columns[0]]
@@ -165,8 +173,13 @@ def _buf_to_xarray(buf):
         # Pandas can figure out headers
         if len(header) == 1:
             header = header[0]
-        df = pandas.read_csv(buf, index_col=index_col, header=header,
-                             low_memory=False, float_precision='high')
+        df = pandas.read_csv(
+            buf,
+            index_col=index_col,
+            header=header,
+            low_memory=False,
+            float_precision="high",
+        )
 
     if len(indexes) == 0:
         # If originally a Series, squeeze empty df dim
@@ -213,7 +226,7 @@ def _try_to_date(x):
     the input unaltered if it's not a date.
     Don't attempt converting numeric or boolean arrays.
     """
-    if x.dtype.kind != 'U':  # unicode string
+    if x.dtype.kind != "U":  # unicode string
         return x
     try:
         # In case of ambiguity, prefer European format DD/MM/YYYY to the
@@ -236,7 +249,7 @@ def _try_to_numeric(x):
 
       [_try_to_numeric(x) for x in v]
     """
-    if x.dtype.kind != 'U':  # Unicode string
+    if x.dtype.kind != "U":  # Unicode string
         return x
     try:
         return pandas.to_numeric(x)
@@ -245,8 +258,14 @@ def _try_to_numeric(x):
 
 
 _BOOL_MAP = {
-    'T': True, 'Y': True, 'YES': True, 'TRUE': True,
-    'F': False, 'N': False, 'NO': False, 'FALSE': False,
+    "T": True,
+    "Y": True,
+    "YES": True,
+    "TRUE": True,
+    "F": False,
+    "N": False,
+    "NO": False,
+    "FALSE": False,
 }
 
 
@@ -254,7 +273,7 @@ def _try_to_bool(x):
     """Attempt converting an array of strings into an array of bools. Return
     the original, unaltered array if any element fails conversion.
     """
-    if x.dtype.kind != 'U':  # Unicode string
+    if x.dtype.kind != "U":  # Unicode string
         return x
     try:
         return [_BOOL_MAP[i.upper()] for i in x.tolist()]
@@ -282,7 +301,7 @@ def _unpack(xa, dim, unstack=True):
         assert len(v.dims) == 1
         if v.dims[0] == dim:
             # Non-index coords are formatted as `name (dim)`
-            m = re.match(r'(.+) \((.+)\)$', k)
+            m = re.match(r"(.+) \((.+)\)$", k)
             if m:
                 coord_name, coord_dim = m.group(1), m.group(2)
                 # Non-index coordinate
@@ -307,17 +326,21 @@ def _unpack(xa, dim, unstack=True):
             # Drop extra dims if there is no ambiguity, otherwise raise error
             for coord, coord_dim in nonindex_coords:
                 cvalue = xa.coords[coord]
-                slice0 = cvalue.isel(**{
-                    other_dim: 0
-                    for other_dim in cvalue.dims
-                    if other_dim != coord_dim
-                }, drop=True)
+                slice0 = cvalue.isel(
+                    **{
+                        other_dim: 0
+                        for other_dim in cvalue.dims
+                        if other_dim != coord_dim
+                    },
+                    drop=True,
+                )
                 if (cvalue == slice0).all():
                     xa.coords[coord] = slice0
                 else:
-                    raise ValueError("Non-index coord %s has different "
-                                     "values for the same value of its "
-                                     "dimension %s" % (coord, coord_dim))
+                    raise ValueError(
+                        f"Non-index coord {coord} has different values for the same "
+                        f"value of its dimension {coord_dim}"
+                    )
         # Finally rename non-index coords
         xa = xa.rename(rename_map)
 
