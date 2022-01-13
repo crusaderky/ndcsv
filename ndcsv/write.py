@@ -94,13 +94,17 @@ def _write_csv_dataarray(array, buf):
     # non-index coords are lost when converting to pandas.
     # Incorporate them into the MultiIndex
     for dim in array.dims:
+        from_mindex = False
         if isinstance(array.coords[dim].to_index(), pandas.MultiIndex):
             array = array.reset_index(dim)
+            from_mindex = True
         elif dim not in array.coords:
             # Force default RangeIndex
             array.coords[dim] = array.coords[dim]
         if list(array[dim].coords) != [dim]:
-            array = array.set_index({dim: list(array[dim].coords)})
+            array = array.set_index(
+                {dim + "" if from_mindex else "_mindex": list(array[dim].coords)}
+            )
 
     _write_csv_pandas(array.to_pandas(), buf)
 
