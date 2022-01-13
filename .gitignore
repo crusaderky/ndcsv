@@ -54,7 +54,6 @@ dask-worker-space/
 Icon*
 
 .ipynb_checkpoints
-ndcsv/version.py
 
 doc/_build
 _build

@@ -320,8 +320,18 @@ def test_duplicate_index():
     xarray.testing.assert_equal(a, b)
 
 
-def test_duplicate_index_multiindex():
-    """Duplicate indices are OK as long as you don't try unstacking
+@pytest.mark.parametrize("unstack", [
+    False,
+    pytest.param(
+        True,
+        marks=pytest.mark.skipif(
+            xarray.__version__ < "0.17",
+            reason="Unstacking duplicate indices requires xarray 0.17"
+        )
+    ),
+])
+def test_duplicate_index_multiindex(unstack):
+    """Duplicate indices are OK
     """
     a = xarray.DataArray(
         [1, 2], dims=['dim_0'],
@@ -336,12 +346,5 @@ def test_duplicate_index_multiindex():
     write_csv(a, buf)
     assert buf.getvalue().replace('\r', '') == txt
     buf.seek(0)
-
-    b = read_csv(buf, unstack=False)
-    xarray.testing.assert_equal(a, b)
-
-    buf.seek(0)
-    with pytest.raises(ValueError) as e:
-        read_csv(buf, unstack=True)
-    assert str(e.value) == ("cannot reindex or align along dimension 'dim_0' "
-                            "because the index has duplicate values")
+    b = read_csv(buf, unstack=unstack)
+    xarray.testing.assert_equal(a.unstack() if unstack else a, b)

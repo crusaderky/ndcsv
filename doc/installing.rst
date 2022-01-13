@@ -6,7 +6,7 @@ Installation
 Required dependencies
 ---------------------
 
-- Python 3.6 or later
+- Python 3.7 or later
 - `xarray <http://xarray.pydata.org/>`_
 - `pshell <https://pshell.readthedocs.io/>`_
 
@@ -17,6 +17,4 @@ To run the test suite after installing ndcsv, first install (via pypi or conda)
 
 - `py.test <https://pytest.org>`__: Simple unit testing library
 
-and run
-``py.test --pyargs ndcsv``.
-
+and run ``pytest ndcsv``.

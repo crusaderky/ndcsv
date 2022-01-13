@@ -330,7 +330,7 @@ def _unpack(xa, dim, unstack=True):
         coord_value = xa.coords[xa.dims[0]]
         xa = xa.rename({old_dim: new_dim})
         del xa.coords[xa.dims[0]]
-        xa.coords[coord_name] = (xa.dims[0], coord_value)
+        xa.coords[coord_name] = (xa.dims[0], coord_value.data)
 
     else:
         assert len(dims) == 1

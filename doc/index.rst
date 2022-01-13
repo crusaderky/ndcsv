@@ -27,6 +27,7 @@ Index
    dataloss
    api
    installing
+   develop
    whats-new
 
 Credits
