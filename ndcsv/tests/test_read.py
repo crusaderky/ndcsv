@@ -123,9 +123,7 @@ def test_ambiguous_nonindex_coords():
 
 @pytest.mark.parametrize("unstack", [False, True])
 def test_nonindex_coords_with_multiindex(unstack):
-    buf = io.StringIO(
-        "x,y,z (x),\nx1,y1,z1,1\nx1,y2,z1,2\nx2,y1,z2,3\nx2,y2,z2,4\n"
-    )
+    buf = io.StringIO("x,y,z (x),\nx1,y1,z1,1\nx1,y2,z1,2\nx2,y1,z2,3\nx2,y2,z2,4\n")
     a = read_csv(buf, unstack=unstack)
     if unstack:
         b = xarray.DataArray(
