@@ -2,12 +2,18 @@
 
 This module is copy-pasted from xarray-extras
 """
-from collections import OrderedDict
+from __future__ import annotations
+
+from collections.abc import Hashable
+from typing import TypeVar
 
 import pandas
+import xarray
+
+T = TypeVar("T", xarray.DataArray, xarray.Dataset)
 
 
-def proper_unstack(array, dim):
+def proper_unstack(array: T, dim: Hashable) -> T:
     """Work around an issue in xarray that causes the data to be sorted
     alphabetically by label on unstack():
 
@@ -31,7 +37,7 @@ def proper_unstack(array, dim):
     levels = []
     labels = []
     for levels_i, labels_i in zip(mindex.levels, mindex.codes):
-        level_map = OrderedDict()
+        level_map: dict[str, int] = {}
 
         for label in labels_i:
             if label not in level_map:

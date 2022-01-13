@@ -2,8 +2,11 @@
 
 See :doc:`format` for format specs
 """
+from __future__ import annotations
+
 import csv
 import io
+from typing import IO
 
 import pandas
 import pshell as sh
@@ -12,7 +15,10 @@ import xarray
 from .proper_unstack import proper_unstack
 
 
-def write_csv(array, path_or_buf=None):
+def write_csv(
+    array: xarray.DataArray | pandas.Series | pandas.DataFrame,
+    path_or_buf: str | IO | None = None,
+):
     """Write an n-dimensional array to an NDCSV file.
 
     Any number of dimensions are supported. If the array has more than two
@@ -62,7 +68,7 @@ def write_csv(array, path_or_buf=None):
         )
 
 
-def _write_csv_dataarray(array, buf):
+def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
     """Write :class:`xarray.DataArray` to buffer"""
     if array.ndim == 0:
         # 0D (scalar) array
@@ -105,14 +111,13 @@ def _write_csv_dataarray(array, buf):
             # Force default RangeIndex
             array.coords[dim] = array.coords[dim]
         if list(array[dim].coords) != [dim]:
-            array = array.set_index(
-                {dim + "" if from_mindex else "_mindex": list(array[dim].coords)}
-            )
+            indexes = {dim if from_mindex else f"{dim}_mindex": list(array[dim].coords)}
+            array = array.set_index(indexes)  # type: ignore
 
     _write_csv_pandas(array.to_pandas(), buf)
 
 
-def _write_csv_pandas(array, buf):
+def _write_csv_pandas(array: pandas.Series | pandas.DataFrame, buf: IO) -> None:
     """Write :class:`pandas.Series` or :class:`pandas.DataFrame` to buffer"""
     # Raise ValueError if there's empty strings in the header
     _check_empty_index(array.index)
@@ -155,7 +160,7 @@ def _write_csv_pandas(array, buf):
         array.to_csv(buf, header=None)
 
 
-def _check_empty_index(idx):
+def _check_empty_index(idx: pandas.Index) -> None:
     """Check for empty strings and NaNs in pandas.Index
 
     :param pandas.Index idx:
