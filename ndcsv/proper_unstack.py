@@ -29,7 +29,7 @@ def proper_unstack(array, dim):
 
     levels = []
     labels = []
-    for levels_i, labels_i in zip(mindex.levels, mindex.labels):
+    for levels_i, labels_i in zip(mindex.levels, mindex.codes):
         level_map = OrderedDict()
 
         for label in labels_i:
