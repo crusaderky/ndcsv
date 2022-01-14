@@ -158,7 +158,7 @@ def _check_empty_index(idx):
         If one or more cells of the index are empty strings or NaN
     """
     if isinstance(idx, pandas.MultiIndex):
-        for level, label in zip(idx.levels, idx.labels):
+        for level, label in zip(idx.levels, idx.codes):
             # A MultiIndex with NaNs will have a levels and -1 labels
             # In this example, x = [NaN, 1.0] y = [0, 1]
             # MultiIndex(levels=[[1.0], [0, 1]],
