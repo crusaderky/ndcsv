@@ -1,7 +1,7 @@
 import importlib.metadata
 
-from .read import read_csv
-from .write import write_csv
+from ndcsv.read import read_csv
+from ndcsv.write import write_csv
 
 try:
     __version__ = importlib.metadata.version("ndcsv")

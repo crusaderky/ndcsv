@@ -14,7 +14,7 @@ import pandas
 import pshell as sh
 from xarray import DataArray
 
-from .proper_unstack import proper_unstack
+from ndcsv.proper_unstack import proper_unstack
 
 
 def read_csv(path_or_buf: str | TextIO, unstack: bool = True) -> DataArray:
