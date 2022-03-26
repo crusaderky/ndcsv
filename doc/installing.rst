@@ -6,7 +6,7 @@ Installation
 Required dependencies
 ---------------------
 
-- Python 3.7 or later
+- Python 3.8 or later
 - `xarray <http://xarray.pydata.org/>`_
 - `pshell <https://pshell.readthedocs.io/>`_
 
