@@ -13,7 +13,7 @@ v1.1.0 (Unreleased)
   ========== ====== =====
   Dependency 1.0.0  1.1.0
   ========== ====== =====
-  python     3.6    3.7
+  python     3.6    3.8
   numpy      1.13   1.14
   pandas     0.21   0.24
   xarray     0.10.9 0.14

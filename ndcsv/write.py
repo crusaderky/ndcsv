@@ -12,7 +12,7 @@ import pandas
 import pshell as sh
 import xarray
 
-from .proper_unstack import proper_unstack
+from ndcsv.proper_unstack import proper_unstack
 
 
 def write_csv(
