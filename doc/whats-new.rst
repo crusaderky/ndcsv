@@ -5,7 +5,7 @@ What's New
 
 .. _whats-new.1.1.0:
 
-v1.1.0 (Unreleased)
+v1.1.0 (2022-03-26)
 -------------------
 
 - Bumped minimum version of dependencies:
