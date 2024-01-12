@@ -10,6 +10,8 @@ import xarray
 
 from ndcsv import read_csv
 
+PANDAS_GE_150 = [int(x) for x in pandas.__version__.split(".")] >= [1, 5]
+
 
 def test_malformed_input():
     buf = io.StringIO("foo,bar,baz")
@@ -32,17 +34,16 @@ def test_coords_dtypes(unstack):
     if not unstack:
         # Manually unstack
         a = a.unstack("dim_1")
-    print("==================")
-    print(a)
+
     assert a.x1.dtype.kind == "i"  # int
     assert a.x2.dtype.kind == "M"  # numpy.datetime64
     assert a.y1.dtype.kind == "f"  # float
-    if unstack:
-        assert a.x3.dtype.kind == "b"  # bool
-        assert a.y2.dtype.kind == "U"  # unicode string
-    else:
+    if not PANDAS_GE_150 and not unstack:
         assert a.x3.dtype.kind == "O"  # bool
         assert a.y2.dtype.kind == "O"  # unicode string
+    else:
+        assert a.x3.dtype.kind == "b"  # bool
+        assert a.y2.dtype.kind == "U"  # unicode string
 
 
 def test_coords_bool():
