@@ -13,8 +13,14 @@ from __future__ import annotations
 # serve to show the default.
 import datetime
 import os
+import sys
 
 import ndcsv
+
+print("python exec:", sys.executable)
+print("sys.path:", sys.path)
+print("ndcsv version: ", ndcsv.__version__)
+
 
 # -- General configuration ------------------------------------------------
 
@@ -39,8 +45,8 @@ extlinks = {
 
 autosummary_generate = True
 
-# Add any paths that contain ndcsvs here, relative to this directory.
-ndcsvs_path = ["_ndcsvs"]
+# Add any paths that contain templates here, relative to this directory.
+templates_path = ["_templates"]
 
 # The suffix of source filenames.
 source_suffix = ".rst"
@@ -112,9 +118,7 @@ html_theme = "sphinx_rtd_theme"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {
-    "logo_only": True,
-}
+html_theme_options = {"logo_only": True}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
@@ -162,11 +166,11 @@ html_last_updated_fmt = today_fmt
 # typographically correct entities.
 # html_use_smartypants = True
 
-# Custom sidebar ndcsvs, maps document names to ndcsv names.
+# Custom sidebar templates, maps document names to template names.
 # html_sidebars = {}
 
-# Additional ndcsvs that should be rendered to pages, maps page names to
-# ndcsv names.
+# Additional templates that should be rendered to pages, maps page names to
+# template names.
 # html_additional_pages = {}
 
 # If false, no module index is generated.
