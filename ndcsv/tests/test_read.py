@@ -56,11 +56,20 @@ def test_coords_bool():
     assert a.y.values.tolist() == [True, False] * 10
 
 
-def test_coords_date():
-    buf = io.StringIO("y,10/11/2017,2017-11-10\nx,,\nx0,1,2\n")
+@pytest.mark.parametrize(
+    "s",
+    [
+        "2017-11-13,2017-11-14",
+        "13/11/2017,14/11/2017",
+        "11/13/2017,11/14/2017",
+        "13 Nov 2017,14 Nov 2017",
+    ],
+)
+def test_coords_date(s):
+    buf = io.StringIO(f"y,{s}\nx,,\nx0,1,2\n")
     a = read_csv(buf)
     np.testing.assert_equal(
-        pandas.to_datetime(["10 Nov 2017", "10 Nov 2017"]).values, a.coords["y"].values
+        pandas.to_datetime(["13 Nov 2017", "14 Nov 2017"]).values, a.coords["y"].values
     )
 
 
