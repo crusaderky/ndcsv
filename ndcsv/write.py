@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import csv
 import io
-from typing import IO
+from typing import IO, Literal, overload
 
 import pandas
 import pshell as sh
@@ -15,10 +15,26 @@ import xarray
 from ndcsv.proper_unstack import proper_unstack
 
 
+@overload
+def write_csv(
+    array: xarray.DataArray | pandas.Series | pandas.DataFrame,
+    path_or_buf: str | IO,
+) -> None:
+    ...
+
+
+@overload
+def write_csv(
+    array: xarray.DataArray | pandas.Series | pandas.DataFrame,
+    path_or_buf: Literal[None] = None,
+) -> str:
+    ...
+
+
 def write_csv(
     array: xarray.DataArray | pandas.Series | pandas.DataFrame,
     path_or_buf: str | IO | None = None,
-):
+) -> str | None:
     """Write an n-dimensional array to an NDCSV file.
 
     Any number of dimensions are supported. If the array has more than two
@@ -56,9 +72,7 @@ def write_csv(
         # Automatically detect .csv or .csv.gz extension
         with sh.open(path_or_buf, "w") as fh:
             write_csv(array, fh)
-        return
-
-    if isinstance(array, xarray.DataArray):
+    elif isinstance(array, xarray.DataArray):
         _write_csv_dataarray(array, path_or_buf)
     elif isinstance(array, (pandas.Series, pandas.DataFrame)):
         _write_csv_pandas(array, path_or_buf)
@@ -66,6 +80,8 @@ def write_csv(
         raise TypeError(
             "Input data is not a xarray.DataArray, pandas.Series or pandas.DataFrame"
         )
+
+    return None
 
 
 def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
@@ -114,7 +130,7 @@ def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
             array.coords[dim] = array.coords[dim]
         if list(array[dim].coords) != [dim]:
             indexes = {dim if from_mindex else f"{dim}_mindex": list(array[dim].coords)}
-            array = array.set_index(indexes)  # type: ignore
+            array = array.set_index(indexes)
 
     _write_csv_pandas(array.to_pandas(), buf)
 

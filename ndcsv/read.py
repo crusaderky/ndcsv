@@ -8,7 +8,7 @@ import csv
 import io
 import re
 from collections.abc import Hashable
-from typing import TextIO, cast
+from typing import Any, TextIO, cast
 
 import pandas
 import pshell as sh
@@ -220,7 +220,7 @@ def _coords_format_conversion(xa: DataArray) -> DataArray:
     return xa
 
 
-def _try_to_date(x):
+def _try_to_date(x: Any) -> Any:
     """Wrapper around :func:`pandas.to_datetime` that returns
     the input unaltered if it's not a date.
     Don't attempt converting numeric or boolean arrays.
@@ -235,7 +235,7 @@ def _try_to_date(x):
         return x
 
 
-def _try_to_numeric(x):
+def _try_to_numeric(x: Any) -> Any:
     """Wrapper around :func:`pandas.to_numeric` that returns
     the input unaltered if it's a string or another non-numeric type.
 
@@ -268,7 +268,7 @@ _BOOL_MAP = {
 }
 
 
-def _try_to_bool(x):
+def _try_to_bool(x: Any) -> Any:
     """Attempt converting an array of strings into an array of bools. Return
     the original, unaltered array if any element fails conversion.
     """
