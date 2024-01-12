@@ -10,6 +10,8 @@ import xarray
 
 from ndcsv import read_csv
 
+PANDAS_GE_150 = [int(x) for x in pandas.__version__.split(".")] >= [1, 5]
+
 
 def test_malformed_input():
     buf = io.StringIO("foo,bar,baz")
@@ -32,17 +34,16 @@ def test_coords_dtypes(unstack):
     if not unstack:
         # Manually unstack
         a = a.unstack("dim_1")
-    print("==================")
-    print(a)
+
     assert a.x1.dtype.kind == "i"  # int
     assert a.x2.dtype.kind == "M"  # numpy.datetime64
     assert a.y1.dtype.kind == "f"  # float
-    if unstack:
-        assert a.x3.dtype.kind == "b"  # bool
-        assert a.y2.dtype.kind == "U"  # unicode string
-    else:
+    if not PANDAS_GE_150 and not unstack:
         assert a.x3.dtype.kind == "O"  # bool
         assert a.y2.dtype.kind == "O"  # unicode string
+    else:
+        assert a.x3.dtype.kind == "b"  # bool
+        assert a.y2.dtype.kind == "U"  # unicode string
 
 
 def test_coords_bool():
@@ -56,11 +57,20 @@ def test_coords_bool():
     assert a.y.values.tolist() == [True, False] * 10
 
 
-def test_coords_date():
-    buf = io.StringIO("y,10/11/2017,2017-11-10\nx,,\nx0,1,2\n")
+@pytest.mark.parametrize(
+    "s",
+    [
+        "2017-11-13,2017-11-14",
+        "13/11/2017,14/11/2017",
+        "11/13/2017,11/14/2017",
+        "13 Nov 2017,14 Nov 2017",
+    ],
+)
+def test_coords_date(s):
+    buf = io.StringIO(f"y,{s}\nx,,\nx0,1,2\n")
     a = read_csv(buf)
     np.testing.assert_equal(
-        pandas.to_datetime(["10 Nov 2017", "10 Nov 2017"]).values, a.coords["y"].values
+        pandas.to_datetime(["13 Nov 2017", "14 Nov 2017"]).values, a.coords["y"].values
     )
 
 

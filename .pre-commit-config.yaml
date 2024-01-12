@@ -34,6 +34,6 @@ repos:
         additional_dependencies:
           # Typed libraries
           - numpy
-          - pandas==1.4
+          - pandas
           - pshell
-          - xarray==2022.3.0
+          - xarray
