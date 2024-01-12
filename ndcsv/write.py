@@ -84,7 +84,9 @@ def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
                 f"Multi-dimensional coord '{k}' is not supported by the NDCSV format"
             )
         if len(v.dims) == 1 and v.dims[0] != k:
-            coord_renames[k] = f"{k} ({v.dims[0]})"
+            idx = array.indexes[v.dims[0]]
+            if idx is not None and not isinstance(idx, pandas.MultiIndex):
+                coord_renames[k] = f"{k} ({v.dims[0]})"
     array = array.rename(coord_renames)
 
     if array.ndim > 2:
