@@ -208,7 +208,7 @@ def _coords_format_conversion(xa: DataArray) -> DataArray:
         if isinstance(v.to_index(), pandas.MultiIndex):
             xa = xa.reset_index(k)
 
-    for k, v in xa.coords.items():
+    for k, v in list(xa.coords.items()):
         # Convert numpy array of objects, as loaded by pandas, to array of
         # int, float, etc.
         xa.coords[k] = v.dims, v.values.tolist()
@@ -300,7 +300,7 @@ def _unpack(xa: DataArray, dim: Hashable, unstack: bool = True) -> DataArray:
         assert len(v.dims) == 1
         if v.dims[0] == dim:
             # Non-index coords are formatted as `name (dim)`
-            m = re.match(r"(.+) \((.+)\)$", k)
+            m = re.match(r"(.+) \((.+)\)$", str(k))
             if m:
                 coord_name, coord_dim = m.group(1), m.group(2)
                 # Non-index coordinate
