@@ -61,7 +61,16 @@ addopts = "--strict-markers --strict-config -v -r sxfE --color=yes"
 xfail_strict = true
 python_files = ["test_*.py"]
 testpaths = ["ndcsv/tests"]
-
+filterwarnings = [
+    "error",
+    'ignore:datetime.datetime.utcfromtimestamp\(\) is deprecated:DeprecationWarning',
+    # FIXME
+    'ignore:.*will no longer be implicitly promoted:FutureWarning',
+    'ignore:.*updating coordinate .* with a PandasMultiIndex would leave the multi-index level coordinates .* in an inconsistent state:FutureWarning',
+    'ignore:Could not infer format, so each element will be parsed individually:UserWarning',
+    'ignore:Parsing dates in .* format when dayfirst=True was specified:UserWarning',
+    'ignore:rename .* does not create an index anymore:UserWarning',
+]
 
 [tool.coverage.report]
 show_missing = true
