@@ -61,7 +61,21 @@ addopts = "--strict-markers --strict-config -v -r sxfE --color=yes"
 xfail_strict = true
 python_files = ["test_*.py"]
 testpaths = ["ndcsv/tests"]
-
+filterwarnings = [
+    "error",
+    # Raised internally by pandas
+    'ignore:datetime.datetime.utcfromtimestamp\(\) is deprecated:DeprecationWarning',
+    # minimum versions only
+    'ignore:Updating MultiIndexed coordinate .* would corrupt indices for other variables:FutureWarning',
+    'ignore:The signature of `Series.to_csv` was aligned to that of `DataFrame.to_csv`:FutureWarning',
+    'ignore:invalid value encountered in cast:RuntimeWarning',
+    # FIXME these need to be looked at
+    'ignore:.*will no longer be implicitly promoted:FutureWarning',
+    'ignore:.*updating coordinate .* with a PandasMultiIndex would leave the multi-index level coordinates .* in an inconsistent state:FutureWarning',
+    'ignore:Could not infer format, so each element will be parsed individually:UserWarning',
+    'ignore:Parsing dates in .* format when dayfirst=True was specified:UserWarning',
+    'ignore:rename .* does not create an index anymore:UserWarning',
+]
 
 [tool.coverage.report]
 show_missing = true

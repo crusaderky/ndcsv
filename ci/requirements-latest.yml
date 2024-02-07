@@ -7,5 +7,6 @@ dependencies:
   - packaging
   - numpy
   - pandas
+  - pyarrow  # TODO remove when pandas 3.0 is released
   - pshell
   - xarray
