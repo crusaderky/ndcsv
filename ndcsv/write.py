@@ -148,7 +148,7 @@ def _write_csv_pandas(array: pandas.Series | pandas.DataFrame, buf: IO) -> None:
 
     if array.ndim == 1:
         # pandas.Series. Write header by hand.
-        writer.writerow(list(array.index.names) + [""])
+        writer.writerow([*array.index.names, ""])
         # First element is empty
         if array.iloc[0] == "":
             # An empty cell would confuse read_csv() below. Make it explicit.
