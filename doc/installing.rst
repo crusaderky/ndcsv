@@ -10,6 +10,18 @@ Required dependencies
 - `xarray <http://xarray.pydata.org/>`_
 - `pshell <https://pshell.readthedocs.io/>`_
 
+Installing with conda
+---------------------
+.. code-block:: bash
+
+    conda install ndcsv
+
+Installing with pip
+-------------------
+.. code-block:: bash
+
+    pip install ndcsv
+
 Testing
 -------
 

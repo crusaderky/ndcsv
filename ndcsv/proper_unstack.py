@@ -43,7 +43,7 @@ def proper_unstack(array: T, dim: Hashable) -> T:
             if label not in level_map:
                 level_map[label] = len(level_map)
 
-        levels.append([levels_i[k] for k in level_map.keys()])
+        levels.append([levels_i[k] for k in level_map])
         labels.append([level_map[k] for k in labels_i])
 
     mindex = pandas.MultiIndex(levels, labels, names=mindex.names)
