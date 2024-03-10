@@ -7,10 +7,11 @@ import numpy as np
 import pandas
 import pytest
 import xarray
+from packaging.version import parse as parse_version
 
 from ndcsv import read_csv
 
-PANDAS_GE_150 = [int(x) for x in pandas.__version__.split(".")] >= [1, 5]
+PANDAS_GE_150 = parse_version(pandas.__version__).release >= (1, 5)
 
 
 def test_malformed_input():
