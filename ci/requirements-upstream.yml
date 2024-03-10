@@ -1,0 +1,15 @@
+name: ndcsv
+channels:
+  - conda-forge
+dependencies:
+  - pytest
+  - pytest-cov
+  - packaging
+  - numpy
+  - pandas
+  - pyarrow  # TODO remove when pandas 3.0 is released
+  - pshell
+  - xarray
+  - pip:
+      - git+https://github.com/pydata/xarray
+      # numpy, pandas, and pyarrow are upgraded to nightly builds by pytest.yml
