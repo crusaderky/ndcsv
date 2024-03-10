@@ -64,8 +64,6 @@ python_files = ["test_*.py"]
 testpaths = ["ndcsv/tests"]
 filterwarnings = [
     "error",
-    # Raised internally by pandas
-    'ignore:datetime.datetime.utcfromtimestamp\(\) is deprecated:DeprecationWarning',
     # minimum versions only
     'ignore:Updating MultiIndexed coordinate .* would corrupt indices for other variables:FutureWarning',
     'ignore:The signature of `Series.to_csv` was aligned to that of `DataFrame.to_csv`:FutureWarning',
