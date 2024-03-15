@@ -6,7 +6,6 @@ description = """
 Store N-dimensional labelled arrays from xarray or pandas into human-readable CSV
 files and read them back without needing any configuration, load hints, or sidecar
 configuration files."""
-readme = "README.md"
 keywords = ["CSV", "pandas", "xarray"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -31,6 +30,14 @@ dependencies = [
     "xarray >=0.14",
 ]
 dynamic = ["version"]
+
+[project.readme]
+text = """
+Store N-dimensional labelled arrays from xarray or pandas into human-readable
+CSV files and read them back without needing any configuration, load hints, or sidecar
+configuration files.
+"""
+content-type = "text/x-rst"
 
 [project.urls]
 Homepage = "https://github.com/crusaderky/ndcsv"
