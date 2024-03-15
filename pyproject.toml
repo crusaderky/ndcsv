@@ -6,6 +6,7 @@ description = """
 Store N-dimensional labelled arrays from xarray or pandas into human-readable CSV
 files and read them back without needing any configuration, load hints, or sidecar
 configuration files."""
+readme = "README.md"
 keywords = ["CSV", "pandas", "xarray"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",

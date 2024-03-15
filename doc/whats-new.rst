@@ -5,7 +5,7 @@ What's New
 
 .. _whats-new.1.2.0:
 
-v1.2.0 (unreleased)
+v1.2.0 (2024-03-15)
 -------------------
 - Added support for Python 3.11 and 3.12
 - Added support for xarray >=2022.6.0
