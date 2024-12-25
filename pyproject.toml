@@ -15,11 +15,13 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.8"
 dependencies = [
@@ -31,6 +33,11 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.urls]
+Homepage = "https://github.com/crusaderky/ndcsv"
+"Bug Tracker" = "https://github.com/crusaderky/ndcsv/issues"
+Changelog = "https://ndcsv.readthedocs.io/en/latest/whats-new.html"
+
 [project.readme]
 text = """
 Store N-dimensional labelled arrays from xarray or pandas into human-readable
@@ -38,9 +45,6 @@ CSV files and read them back without needing any configuration, load hints, or s
 configuration files.
 """
 content-type = "text/x-rst"
-
-[project.urls]
-Homepage = "https://github.com/crusaderky/ndcsv"
 
 [tool.setuptools]
 packages = ["ndcsv"]
@@ -76,6 +80,8 @@ filterwarnings = [
     'ignore:Updating MultiIndexed coordinate .* would corrupt indices for other variables:FutureWarning',
     'ignore:The signature of `Series.to_csv` was aligned to that of `DataFrame.to_csv`:FutureWarning',
     'ignore:invalid value encountered in cast:RuntimeWarning',
+    # pandas/xarray upstream
+    'ignore:Converting non-nanosecond precision datetime:UserWarning',
     # FIXME these need to be looked at
     'ignore:.*will no longer be implicitly promoted:FutureWarning',
     'ignore:.*updating coordinate .* with a PandasMultiIndex would leave the multi-index level coordinates .* in an inconsistent state:FutureWarning',
@@ -96,26 +102,49 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-builtins = ["ellipsis"]
 exclude = [".eggs"]
 target-version = "py38"
 
 [tool.ruff.lint]
 ignore = [
-  "E402",  # module level import not at top of file
-  "SIM108",  # use ternary operator instead of if-else block
+  "EM101",    # Exception must not use a string literal, assign to variable first
+  "EM102",    # Exception must not use an f-string literal, assign to variable first
+  "N802",     # Function name should be lowercase
+  "N803",     # Argument name should be lowercase
+  "N806",     # Variable should be lowercase
+  "N816",     # Variable in global scope should not be mixedCase
+  "PT006",    # Wrong type passed to first argument of `pytest.mark.parametrize`; expected `tuple`
+  "PLC0414",  # Import alias does not rename original package
+  "PLR0912",  # Too many branches
+  "PLR0913",  # Too many arguments in function definition
+  "PLR0915",  # Too many statements
+  "PLR2004",  # Magic value used in comparison, consider replacing `123` with a constant variable
+  "PLW2901",  # for loop variable overwritten by assignment target
+  "SIM108",   # Use ternary operator instead of if-else block
+  "N999",     # Invalid module name: 'TEMPLATE'  TODO remove this line
 ]
 select = [
-  "F",    # Pyflakes
+  "YTT",  # flake8-2020
   "B",    # flake8-bugbear
   "C4",   # flake8-comprehensions
-  "ISC",  # flake8-implicit-str-concat
+  "EM",   # flake8-errmsg
+  "EXE",  # flake8-executable
+  "ICN",  # flake8-import-conventions
+  "G",    # flake8-logging-format
+  "PIE",  # flake8-pie
+  "PT",   # flake8-pytest-style
+  "RET",  # flake8-return
   "SIM",  # flake8-simplify
+  "ARG",  # flake8-unused-arguments
+  "I",    # isort
+  "NPY",  # NumPy specific rules
+  "N",    # pep8-naming
   "E",    # Pycodestyle
   "W",    # Pycodestyle
-  "I",    # isort
-  "N",    # pep8-naming
-  "UP",   # Pyupgrade
+  "PGH",  # pygrep-hooks
+  "F",    # Pyflakes
+  "PL",   # pylint
+  "UP",   # pyupgrade
   "RUF",  # unused-noqa
   "EXE001",  #  Shebang is present but file is not executable
 ]
@@ -124,9 +153,9 @@ select = [
 known-first-party = ["ndcsv"]
 
 [tool.mypy]
-allow_incomplete_defs = false
-allow_untyped_decorators = false
-allow_untyped_defs = false
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
 ignore_missing_imports = true
 no_implicit_optional = true
 show_error_codes = true
@@ -136,4 +165,4 @@ warn_unreachable = true
 
 [[tool.mypy.overrides]]
 module = ["*.tests.*"]
-allow_untyped_defs = true
+disallow_untyped_defs = false

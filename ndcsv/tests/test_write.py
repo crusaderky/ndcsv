@@ -27,7 +27,7 @@ from ndcsv import write_csv
     ],
 )
 def test_blank_coord(nancoord):
-    """Empy strings and NaNs in the coords must trigger a ValueError as
+    """Empty strings and NaNs in the coords must trigger a ValueError as
     there is no way to round-trip them back
     """
     # Simple index
@@ -48,7 +48,7 @@ def test_blank_coord(nancoord):
     i3 = xarray.DataArray(
         [[10, 20], [30, 40]], dims=["x", "y"], coords={"y": nancoord}, name="i3"
     ).stack(s=["x", "y"])
-    # MultiIndex on the rows; 2st level
+    # MultiIndex on the rows; 2nd level
     i4 = (
         xarray.DataArray(
             [[10, 20], [30, 40]], dims=["x", "y"], coords={"y": nancoord}, name="i4"
@@ -65,6 +65,5 @@ def test_blank_coord(nancoord):
     for inp in (i0, i1, i2, i3, i4):
         print(inp)
         buf = io.StringIO()
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(ValueError, match=msg):
             write_csv(inp, buf)
-        assert str(e.value) == msg
