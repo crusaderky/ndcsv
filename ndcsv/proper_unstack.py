@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections.abc import Hashable
 from typing import TypeVar
 
-import pandas
+import pandas as pd
 import xarray
 
 T = TypeVar("T", xarray.DataArray, xarray.Dataset)
@@ -46,7 +46,7 @@ def proper_unstack(array: T, dim: Hashable) -> T:
         levels.append([levels_i[k] for k in level_map])
         labels.append([level_map[k] for k in labels_i])
 
-    mindex = pandas.MultiIndex(levels, labels, names=mindex.names)
+    mindex = pd.MultiIndex(levels, labels, names=mindex.names)
     array = array.copy()
     array.coords[dim] = mindex
 

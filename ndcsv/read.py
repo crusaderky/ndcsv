@@ -10,7 +10,7 @@ import re
 from collections.abc import Hashable
 from typing import Any, TextIO, cast
 
-import pandas
+import pandas as pd
 import pshell as sh
 from xarray import DataArray
 
@@ -103,13 +103,13 @@ def _buf_to_xarray(buf: TextIO) -> DataArray:
         rows.append(row)
 
         if len(rows) == 2 and len(rows[0]) == len(rows[1]) - 1:
-            # This is a pandas.Series
+            # This is a pd.Series
             num_index_col = len(rows[0])
             num_header_rows = 1
             break
 
         if len(rows) == 3:
-            # This is a pandas.DataFrame
+            # This is a pd.DataFrame
             # Do we have a MultiIndex on the rows?
             try:
                 num_index_col = rows[0].index("") + 1
@@ -142,13 +142,12 @@ def _buf_to_xarray(buf: TextIO) -> DataArray:
         # Reached end of file
         if len(rows) == 1 and len(rows[0]) == 1:
             # 0-dimensional file
-            # Let pandas.read_csv() apply its magic type detection
-            df = pandas.read_csv(
+            # Let pd.read_csv() apply its magic type detection
+            df = pd.read_csv(
                 io.StringIO(rows[0][0]), header=None, float_precision="high"
             )
             return DataArray(df.iloc[0, 0])
-        else:
-            raise ValueError("Malformed N-dimensional CSV")
+        raise ValueError("Malformed N-dimensional CSV")
 
     # Use pandas to read the whole file
     # This is much faster than csv.reader and also applies pandas
@@ -160,7 +159,7 @@ def _buf_to_xarray(buf: TextIO) -> DataArray:
     # If no MultiIndex on columns and it's not a Series, read_csv should not be
     # passed a header
     if len(header) == 1 and len(indexes) > 0:
-        df = pandas.read_csv(
+        df = pd.read_csv(
             buf,
             index_col=index_col,
             header=None,
@@ -170,9 +169,9 @@ def _buf_to_xarray(buf: TextIO) -> DataArray:
         )
         df.index.names = indexes
         df.columns = columns[num_index_col:]
-        df.columns.names = [columns[0]]  # type: ignore
+        df.columns.names = [columns[0]]  # type:ignore[attr-defined]
     else:
-        df = pandas.read_csv(
+        df = pd.read_csv(
             buf,
             index_col=index_col,
             header=header[0] if len(header) == 1 else header,
@@ -205,7 +204,7 @@ def _coords_format_conversion(xa: DataArray) -> DataArray:
     """
     # Unpack any MultiIndexes
     for k, v in list(xa.coords.items()):
-        if isinstance(v.to_index(), pandas.MultiIndex):
+        if isinstance(v.to_index(), pd.MultiIndex):
             xa = xa.reset_index(k)
 
     for k, v in list(xa.coords.items()):
@@ -230,7 +229,7 @@ def _try_to_date(x: Any) -> Any:
     try:
         # In case of ambiguity, prefer European format DD/MM/YYYY to the
         # American format MM/DD/YYYY
-        return pandas.to_datetime(x, dayfirst=True)
+        return pd.to_datetime(x, dayfirst=True)
     except ValueError:
         return x
 
@@ -251,7 +250,7 @@ def _try_to_numeric(x: Any) -> Any:
     if x.dtype.kind != "U":  # Unicode string
         return x
     try:
-        return pandas.to_numeric(x)
+        return pd.to_numeric(x)
     except ValueError:
         return x
 
@@ -318,7 +317,7 @@ def _unpack(xa: DataArray, dim: Hashable, unstack: bool = True) -> DataArray:
     # Leave non-index coordinates out
     if len(dims) > 1:
         # Unstack MultiIndex, using a first-seen order
-        xa = xa.set_index({dim: index_coords})  # type: ignore
+        xa = xa.set_index({dim: index_coords})  # type:ignore[dict-item]
         if unstack:
             xa = proper_unstack(xa, dim)
             # Now non-index coords will have become multi-dimensional

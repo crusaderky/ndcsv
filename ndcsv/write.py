@@ -8,7 +8,7 @@ import csv
 import io
 from typing import IO, Literal, overload
 
-import pandas
+import pandas as pd
 import pshell as sh
 import xarray
 
@@ -17,7 +17,7 @@ from ndcsv.proper_unstack import proper_unstack
 
 @overload
 def write_csv(
-    array: xarray.DataArray | pandas.Series | pandas.DataFrame,
+    array: xarray.DataArray | pd.Series | pd.DataFrame,
     path_or_buf: str | IO,
 ) -> None:
     ...
@@ -25,14 +25,14 @@ def write_csv(
 
 @overload
 def write_csv(
-    array: xarray.DataArray | pandas.Series | pandas.DataFrame,
+    array: xarray.DataArray | pd.Series | pd.DataFrame,
     path_or_buf: Literal[None] = None,
 ) -> str:
     ...
 
 
 def write_csv(
-    array: xarray.DataArray | pandas.Series | pandas.DataFrame,
+    array: xarray.DataArray | pd.Series | pd.DataFrame,
     path_or_buf: str | IO | None = None,
 ) -> str | None:
     """Write an n-dimensional array to an NDCSV file.
@@ -74,11 +74,11 @@ def write_csv(
             write_csv(array, fh)
     elif isinstance(array, xarray.DataArray):
         _write_csv_dataarray(array, path_or_buf)
-    elif isinstance(array, (pandas.Series, pandas.DataFrame)):
+    elif isinstance(array, (pd.Series, pd.DataFrame)):
         _write_csv_pandas(array, path_or_buf)
     else:
         raise TypeError(
-            "Input data is not a xarray.DataArray, pandas.Series or pandas.DataFrame"
+            "Input data is not a xarray.DataArray, pd.Series or pd.DataFrame"
         )
 
     return None
@@ -101,7 +101,7 @@ def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
             )
         if len(v.dims) == 1 and v.dims[0] != k:
             idx = array.indexes[v.dims[0]]
-            if idx is not None and not isinstance(idx, pandas.MultiIndex):
+            if idx is not None and not isinstance(idx, pd.MultiIndex):
                 coord_renames[k] = f"{k} ({v.dims[0]})"
     array = array.rename(coord_renames)
 
@@ -111,7 +111,7 @@ def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
         # the first, first unstack them and then stack them again back all
         # together.
         for dim in array.dims[1:]:
-            if isinstance(array.get_index(dim), pandas.MultiIndex):
+            if isinstance(array.get_index(dim), pd.MultiIndex):
                 # Note: unstacked dims end up on the right
                 array = proper_unstack(array, dim)
         # The __columns__ label is completely arbitrary and we're going
@@ -122,7 +122,7 @@ def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
     # Incorporate them into the MultiIndex
     for dim in array.dims:
         from_mindex = False
-        if isinstance(array.coords[dim].to_index(), pandas.MultiIndex):
+        if isinstance(array.coords[dim].to_index(), pd.MultiIndex):
             array = array.reset_index(dim)
             from_mindex = True
         elif dim not in array.coords:
@@ -135,7 +135,7 @@ def _write_csv_dataarray(array: xarray.DataArray, buf: IO) -> None:
     _write_csv_pandas(array.to_pandas(), buf)
 
 
-def _write_csv_pandas(array: pandas.Series | pandas.DataFrame, buf: IO) -> None:
+def _write_csv_pandas(array: pd.Series | pd.DataFrame, buf: IO) -> None:
     """Write :class:`pandas.Series` or :class:`pandas.DataFrame` to buffer"""
     # Raise ValueError if there's empty strings in the header
     _check_empty_index(array.index)
@@ -147,25 +147,25 @@ def _write_csv_pandas(array: pandas.Series | pandas.DataFrame, buf: IO) -> None:
         array.index.name = "dim_0"
 
     if array.ndim == 1:
-        # pandas.Series. Write header by hand.
+        # pd.Series. Write header by hand.
         writer.writerow([*array.index.names, ""])
         # First element is empty
         if array.iloc[0] == "":
             # An empty cell would confuse read_csv() below. Make it explicit.
             array.iloc[0] = "nan"
             na_rep = "nan"
-        elif pandas.isnull(array.iloc[0]):
+        elif pd.isnull(array.iloc[0]):
             na_rep = "nan"
         else:
             # Keep the output CSV as clean as possible
             na_rep = ""
         array.to_csv(buf, header=None, na_rep=na_rep)
-    elif isinstance(array.columns, pandas.MultiIndex):
-        # pandas.DataFrame with a MultiIndex on the columns.
+    elif isinstance(array.columns, pd.MultiIndex):
+        # pd.DataFrame with a MultiIndex on the columns.
         # Simplest case - works out of the box with Pandas!
         array.to_csv(buf)
     else:
-        # pandas.DataFrame without MultiIndex on the columns.
+        # pd.DataFrame without MultiIndex on the columns.
         # Write header by hand.
         if array.columns.name is None:
             array.columns.name = "dim_1"
@@ -178,15 +178,15 @@ def _write_csv_pandas(array: pandas.Series | pandas.DataFrame, buf: IO) -> None:
         array.to_csv(buf, header=None)
 
 
-def _check_empty_index(idx: pandas.Index) -> None:
-    """Check for empty strings and NaNs in pandas.Index
+def _check_empty_index(idx: pd.Index) -> None:
+    """Check for empty strings and NaNs in pd.Index
 
     :param pandas.Index idx:
         Series.index, DataFrame.index, or DataFrame.columns.
     :raises ValueError:
         If one or more cells of the index are empty strings or NaN
     """
-    if isinstance(idx, pandas.MultiIndex):
+    if isinstance(idx, pd.MultiIndex):
         for level, label in zip(idx.levels, idx.codes):
             # A MultiIndex with NaNs will have a levels and -1 labels
             # In this example, x = [NaN, 1.0] y = [0, 1]
@@ -200,8 +200,8 @@ def _check_empty_index(idx: pandas.Index) -> None:
     else:
         if (
             idx.dtype.kind in "OU"  # Object or Unicode
-            and pandas.Series(idx.str.contains("^$")).fillna(False).any()
+            and pd.Series(idx.str.contains("^$")).fillna(False).any()
         ):
             raise ValueError("Empty string in index")
-        if pandas.isnull(idx).any():
+        if pd.isnull(idx).any():
             raise ValueError("NaN in index")

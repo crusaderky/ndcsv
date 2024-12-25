@@ -257,4 +257,3 @@ Empty cells and NaNs
 Empty cells, as per pandas default behaviour, are treated as NaN.
 It is not possible to have empty cells or NaNs in any of the coordinates, as
 that would create ambiguity when reading back the files from disk.
-

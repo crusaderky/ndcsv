@@ -4,21 +4,20 @@ Normal use cases are tested in :mod:`test_roundtrip`
 import io
 
 import numpy as np
-import pandas
+import pandas as pd
 import pytest
 import xarray
 from packaging.version import parse as parse_version
 
 from ndcsv import read_csv
 
-PANDAS_GE_150 = parse_version(pandas.__version__).release >= (1, 5)
+PANDAS_GE_150 = parse_version(pd.__version__).release >= (1, 5)
 
 
 def test_malformed_input():
     buf = io.StringIO("foo,bar,baz")
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match="Malformed N-dimensional CSV"):
         read_csv(buf)
-    assert str(e.value) == "Malformed N-dimensional CSV"
 
 
 @pytest.mark.parametrize("unstack", [True, False])
@@ -71,7 +70,7 @@ def test_coords_date(s):
     buf = io.StringIO(f"y,{s}\nx,,\nx0,1,2\n")
     a = read_csv(buf)
     np.testing.assert_equal(
-        pandas.to_datetime(["13 Nov 2017", "14 Nov 2017"]).values, a.coords["y"].values
+        pd.to_datetime(["13 Nov 2017", "14 Nov 2017"]).values, a.coords["y"].values
     )
 
 
@@ -124,12 +123,12 @@ def test_ambiguous_nonindex_coords():
     index coord
     """
     buf = io.StringIO("x,y,z (x),\n0,0,0,1\n0,1,1,1\n")
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(
+        ValueError,
+        match=r"Non-index coord z \(x\) has different values for "
+        r"the same value of its dimension x",
+    ):
         read_csv(buf)
-    assert str(e.value) == (
-        "Non-index coord z (x) has different values for "
-        "the same value of its dimension x"
-    )
 
 
 @pytest.mark.parametrize("unstack", [False, True])
@@ -151,7 +150,7 @@ def test_nonindex_coords_with_multiindex(unstack):
             [1, 2, 3, 4],
             dims=["dim_0"],
             coords={
-                "dim_0": pandas.MultiIndex.from_tuples(
+                "dim_0": pd.MultiIndex.from_tuples(
                     [("x1", "y1"), ("x1", "y2"), ("x2", "y1"), ("x2", "y2")],
                     names=["x", "y"],
                 ),
@@ -195,18 +194,18 @@ def test_missing_index_coord2(unstack):
     ],
 )
 def test_float_precision(txt):
-    """Test that when ndcsv.read_csv() calls pandas.read_csv(), the argument
+    """Test that when ndcsv.read_csv() calls pd.read_csv(), the argument
     float_precision='high' is used.  This is to combat the below behaviour::
 
-        >>> pandas.read_csv(io.StringIO('x\n0.99988\n'),
+        >>> pd.read_csv(io.StringIO('x\n0.99988\n'),
         ...                 squeeze=True)[0]
         0.9998799999999999
-        >>> pandas.read_csv(io.StringIO('x\n0.99988\n'),
+        >>> pd.read_csv(io.StringIO('x\n0.99988\n'),
         ...                 squeeze=True,
         ...                 float_precision='high')[0]
         0.99988
 
-    The ndcsv.read_csv() calls pandas.read_csv() in three different ways,
+    The ndcsv.read_csv() calls pd.read_csv() in three different ways,
     depending on the number of header rows -- no header row, one header
     row, and more than one header rows.  The precision tests in this module
     are organised in the same manner.

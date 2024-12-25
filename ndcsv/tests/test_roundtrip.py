@@ -8,7 +8,7 @@
 import io
 
 import numpy as np
-import pandas
+import pandas as pd
 import pytest
 import xarray
 from numpy import nan
@@ -307,9 +307,7 @@ def test_duplicate_index_multiindex():
         [1, 2],
         dims=["dim_0"],
         coords={
-            "dim_0": pandas.MultiIndex.from_tuples(
-                [(10, 10), (10, 10)], names=["x", "y"]
-            )
+            "dim_0": pd.MultiIndex.from_tuples([(10, 10), (10, 10)], names=["x", "y"])
         },
     )
 

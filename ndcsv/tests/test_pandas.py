@@ -1,12 +1,12 @@
 import io
 
-import pandas
+import pandas as pd
 
 from ndcsv import write_csv
 
 
 def test_write_dataframe():
-    a = pandas.DataFrame([[1, 2, 3], [4, 5, 6]])
+    a = pd.DataFrame([[1, 2, 3], [4, 5, 6]])
     txt = "dim_1,0,1,2\ndim_0,,,\n0,1,2,3\n1,4,5,6\n"
     buf = io.StringIO()
     write_csv(a, buf)
@@ -32,7 +32,7 @@ def test_write_dataframe():
 
 
 def test_write_series():
-    a = pandas.Series([10, 20])
+    a = pd.Series([10, 20])
     txt = "dim_0,\n0,10\n1,20\n"
     buf = io.StringIO()
     write_csv(a, buf)
