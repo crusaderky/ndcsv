@@ -34,13 +34,13 @@ jobs:
             python-version: "3.8"
             requirements: latest
           - os: macos
-            python-version: "3.12"
+            python-version: "3.13"
             requirements: latest
           - os: windows
             python-version: "3.8"
             requirements: latest
           - os: windows
-            python-version: "3.12"
+            python-version: "3.13"
             requirements: latest
           # Test on minimal requirements
           - os: ubuntu
@@ -55,7 +55,7 @@ jobs:
             requirements: minimal
           # Test on nightly builds of requirements
           - os: ubuntu
-            python-version: "3.12"
+            python-version: "3.13"
             requirements: upstream
 
     steps:
