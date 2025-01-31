@@ -2,6 +2,7 @@
 
 This module is copy-pasted from xarray-extras
 """
+
 from __future__ import annotations
 
 from collections.abc import Hashable
@@ -56,8 +57,8 @@ def proper_unstack(array: T, dim: Hashable) -> T:
 
     # Convert numpy arrays of Python objects to numpy arrays of C floats, ints,
     # strings, etc.
-    for dim in mindex.names:
-        if array.coords[dim].dtype.kind == "O":
-            array.coords[dim] = array.coords[dim].values.tolist()
+    for name in mindex.names:
+        if array.coords[name].dtype.kind == "O":
+            array.coords[name] = array.coords[name].values.tolist()
 
     return array

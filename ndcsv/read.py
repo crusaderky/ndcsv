@@ -2,6 +2,7 @@
 
 See :doc:`format` for format specs
 """
+
 from __future__ import annotations
 
 import csv
