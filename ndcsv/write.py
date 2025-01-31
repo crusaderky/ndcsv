@@ -2,6 +2,7 @@
 
 See :doc:`format` for format specs
 """
+
 from __future__ import annotations
 
 import csv
@@ -19,16 +20,14 @@ from ndcsv.proper_unstack import proper_unstack
 def write_csv(
     array: xarray.DataArray | pd.Series | pd.DataFrame,
     path_or_buf: str | IO,
-) -> None:
-    ...
+) -> None: ...
 
 
 @overload
 def write_csv(
     array: xarray.DataArray | pd.Series | pd.DataFrame,
     path_or_buf: Literal[None] = None,
-) -> str:
-    ...
+) -> str: ...
 
 
 def write_csv(

@@ -1,6 +1,7 @@
 """Test edge cases that only require read_csv()
 Normal use cases are tested in :mod:`test_roundtrip`
 """
+
 import io
 
 import numpy as np

@@ -1,5 +1,4 @@
-"""This module is copy-pasted from xarray-extras
-"""
+"""This module is copy-pasted from xarray-extras"""
 
 import numpy as np
 import pandas as pd

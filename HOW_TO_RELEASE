@@ -60,5 +60,6 @@ Time required: about an hour.
 14g.  The next day, test the conda-forge release
         conda search ndcsv
         conda create -n ndcsv-test ndcsv
+        conda activate ndcsv-test
         conda list
-        python -m 'import ndcsv'
+        python -c 'import ndcsv'
