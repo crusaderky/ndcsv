@@ -93,6 +93,7 @@ def _buf_to_xarray(buf: TextIO) -> DataArray:
     columns: list = []
     indexes: list = []
     num_index_col = None
+    num_header_rows = None
 
     for row in reader:
         # Remove empty cells to the right and whitespaces
@@ -155,6 +156,7 @@ def _buf_to_xarray(buf: TextIO) -> DataArray:
     # automatic type recognition.
     buf.seek(0)
     index_col = 0 if num_index_col == 1 else list(range(num_index_col))
+    assert num_header_rows is not None
     header = list(range(num_header_rows))
 
     # If no MultiIndex on columns and it's not a Series, read_csv should not be
@@ -170,7 +172,7 @@ def _buf_to_xarray(buf: TextIO) -> DataArray:
         )
         df.index.names = indexes
         df.columns = columns[num_index_col:]
-        df.columns.names = [columns[0]]  # type:ignore[attr-defined]
+        df.columns.names = [columns[0]]
     else:
         df = pd.read_csv(
             buf,

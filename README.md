@@ -1,6 +1,7 @@
-[![doc-badge](https://github.com/crusaderky/ndcsv/workflows/Documentation/badge.svg)](https://github.com/crusaderky/ndcsv/actions)
-[![pre-commit-badge](https://github.com/crusaderky/ndcsv/workflows/Linting/badge.svg)](https://github.com/crusaderky/ndcsv/actions)
-[![pytest-badge](https://github.com/crusaderky/ndcsv/workflows/Test/badge.svg)](https://github.com/crusaderky/ndcsv/actions)
+[![doc-badge](https://github.com/crusaderky/ndcsv/actions/workflows/docs.yml/badge.svg)](https://github.com/crusaderky/ndcsv/actions)
+[![lint-badge](https://github.com/crusaderky/ndcsv/actions/workflows/lint.yml/badge.svg)](https://github.com/crusaderky/ndcsv/actions)
+[![wheels-badge](https://github.com/crusaderky/ndcsv/actions/workflows/wheels.yml/badge.svg)](https://github.com/crusaderky/ndcsv/actions)
+[![pytest-badge](https://github.com/crusaderky/ndcsv/actions/workflows/pytest.yml/badge.svg)](https://github.com/crusaderky/ndcsv/actions)
 [![codecov-badge](https://codecov.io/gh/crusaderky/ndcsv/branch/main/graph/badge.svg)](https://codecov.io/gh/crusaderky/ndcsv/branch/main)
 
 # ndcsv: N-Dimensional CSV files for xarray

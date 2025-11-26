@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 # documentation build configuration file, created by
 # sphinx-quickstart on Thu Feb  6 18:57:54 2014.
 #
@@ -246,7 +244,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "ndcsv", "ndcsv Documentation", ["ndcsv Developers"], 1)]
+man_pages = [
+    (
+        "index",
+        "ndcsv",
+        "ndcsv Documentation",
+        ["ndcsv Developers"],
+        1,
+    )
+]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -282,11 +288,11 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 
-# Example configuration for intersphinx: refer to the Python standard library.
+# Configuration for intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
-    "xarray": ("https://xarray.pydata.org/en/stable/", None),
+    "xarray": ("https://docs.xarray.dev/en/stable/", None),
     "pshell": ("https://pshell.readthedocs.io/en/stable/", None),
 }

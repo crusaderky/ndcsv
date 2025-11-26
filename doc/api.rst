@@ -1,5 +1,5 @@
-Python API
-==========
+API Reference
+=============
 
 .. autofunction:: ndcsv.write_csv
 

@@ -1,32 +1,37 @@
-.. _installing:
-
 Installation
 ============
 
 Required dependencies
 ---------------------
 
-- Python 3.8 or later
-- `xarray <http://xarray.pydata.org/>`_
+- Python 3.9 or later
+- `xarray <http://https://xarray.dev/>`_
 - `pshell <https://pshell.readthedocs.io/>`_
 
 Installing with conda
 ---------------------
+
 .. code-block:: bash
 
     conda install ndcsv
 
+
 Installing with pip
 -------------------
+
 .. code-block:: bash
 
     pip install ndcsv
 
-Testing
--------
 
-To run the test suite after installing ndcsv, first install (via pypi or conda)
+.. _mindeps_policy:
 
-- `py.test <https://pytest.org>`__: Simple unit testing library
+Minimum dependency versions
+---------------------------
 
-and run ``pytest ndcsv``.
+This project adopts a rolling policy based on `SPEC 0
+<https://scientific-python.org/specs/spec-0000/>`_ regarding the minimum
+supported version of its dependencies.
+
+You can see the actual minimum tested versions in `pyproject.toml
+<https://github.com/crusaderky/ndcsv/blob/main/pyproject.toml>`_.
