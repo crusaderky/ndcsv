@@ -11,7 +11,7 @@ and reversible. One does not need to specify how many rows and/or columns of
 header are available - the file format is unambiguous and the library
 automatically does the right thing.
 
-The format was designed around `xarray <http://xarray.pydata.org>`_, so it
+The format was designed around `xarray <https://xarray.dev/>`_, so it
 supports, out of the box:
 
 - Arrays with any number of dimensions
@@ -25,8 +25,8 @@ Index
 
    format
    dataloss
-   api
    installing
+   api
    develop
    whats-new
 
@@ -38,8 +38,10 @@ It was open-sourced in 2018.
 
 License
 -------
-The ndcsv Python module is available under the open source
-`Apache License <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
+The ndcsv Python module is available under the open source `Apache License`__.
+
 The ndcsv format is patent-free and in the public domain. Anybody
 can write an alternative implementation; compatibility with the
 Python module is not enforced by law, but strongly encouraged.
+
+__ http://www.apache.org/licenses/LICENSE-2.0.html

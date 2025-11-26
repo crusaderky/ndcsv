@@ -8,11 +8,8 @@ import numpy as np
 import pandas as pd
 import pytest
 import xarray
-from packaging.version import parse as parse_version
 
 from ndcsv import read_csv
-
-PANDAS_GE_150 = parse_version(pd.__version__).release >= (1, 5)
 
 
 def test_malformed_input():
@@ -39,12 +36,8 @@ def test_coords_dtypes(unstack):
     assert a.x1.dtype.kind == "i"  # int
     assert a.x2.dtype.kind == "M"  # numpy.datetime64
     assert a.y1.dtype.kind == "f"  # float
-    if not PANDAS_GE_150 and not unstack:
-        assert a.x3.dtype.kind == "O"  # bool
-        assert a.y2.dtype.kind == "O"  # unicode string
-    else:
-        assert a.x3.dtype.kind == "b"  # bool
-        assert a.y2.dtype.kind == "U"  # unicode string
+    assert a.x3.dtype.kind == "b"  # bool
+    assert a.y2.dtype.kind == "U"  # unicode string
 
 
 def test_coords_bool():

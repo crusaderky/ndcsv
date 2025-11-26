@@ -153,7 +153,7 @@ def _write_csv_pandas(array: pd.Series | pd.DataFrame, buf: IO) -> None:
             # An empty cell would confuse read_csv() below. Make it explicit.
             array.iloc[0] = "nan"
             na_rep = "nan"
-        elif pd.isnull(array.iloc[0]):
+        elif pd.isna(array.iloc[0]):
             na_rep = "nan"
         else:
             # Keep the output CSV as clean as possible
@@ -202,5 +202,5 @@ def _check_empty_index(idx: pd.Index) -> None:
             and pd.Series(idx.str.contains("^$")).fillna(False).any()
         ):
             raise ValueError("Empty string in index")
-        if pd.isnull(idx).any():
+        if pd.isna(idx).any():
             raise ValueError("NaN in index")

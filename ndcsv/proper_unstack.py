@@ -1,6 +1,6 @@
-"""Workaround to xarray issues
+"""Utilities for stacking/unstacking dimensions
 
-This module is copy-pasted from xarray-extras
+Copy-pasted from xarray-extras
 """
 
 from __future__ import annotations
@@ -27,38 +27,40 @@ def proper_unstack(array: T, dim: Hashable) -> T:
 
     :param array:
         xarray.DataArray or xarray.Dataset to unstack
-    :param str dim:
+    :param Hashable dim:
         Name of existing dimension to unstack
     :returns:
-        xarray.DataArray / xarray.Dataset with unstacked dimension
+        xarray.DataArray or xarray.Dataset with unstacked dimension
     """
     # Regenerate Pandas multi-index to be ordered by first appearance
     mindex = array.coords[dim].to_pandas().index
 
+    prev_names: list[Hashable] = mindex.names
     levels = []
-    labels = []
-    for levels_i, labels_i in zip(mindex.levels, mindex.codes):
-        level_map: dict[str, int] = {}
+    codes = []
 
-        for label in labels_i:
-            if label not in level_map:
-                level_map[label] = len(level_map)
+    for levels_i, codes_i in zip(mindex.levels, mindex.codes):
+        level_map: dict[Hashable, int] = {}
+
+        for code in codes_i:
+            if code not in level_map:
+                level_map[code] = len(level_map)
 
         levels.append([levels_i[k] for k in level_map])
-        labels.append([level_map[k] for k in labels_i])
+        codes.append([level_map[k] for k in codes_i])
 
-    mindex = pd.MultiIndex(levels, labels, names=mindex.names)
+    mindex = pd.MultiIndex(levels, codes, names=mindex.names)
     array = array.copy()
-    array.coords[dim] = mindex
+    array = array.drop_vars([dim, *prev_names])
+    array.coords.update(xarray.Coordinates.from_pandas_multiindex(mindex, dim))
 
     # Invoke builtin unstack
-    # This needs to be a tuple: https://github.com/pydata/xarray/issues/6142
     array = array.unstack((dim,))
 
     # Convert numpy arrays of Python objects to numpy arrays of C floats, ints,
     # strings, etc.
     for name in mindex.names:
-        if array.coords[name].dtype.kind == "O":
+        if array.coords[name].dtype == object:
             array.coords[name] = array.coords[name].values.tolist()
 
     return array

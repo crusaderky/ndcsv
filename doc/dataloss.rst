@@ -9,4 +9,4 @@ When writing xarray data, the following information is irreversibly lost:
 - Attributes
 - Data types, unless they can be automatically inferred by :func:`pandas.read_csv`.
   or :func:`pandas.to_datetime`. Booleans receive special treatment.
-- `dask <https://dask.org>`_ chunks
+- `Dask <https://dask.org>`_ chunks
