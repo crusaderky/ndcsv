@@ -146,7 +146,7 @@ module = ["*.tests.*"]
 disallow_untyped_defs = false
 
 [tool.pixi.workspace]
-channels = ["https://prefix.dev/conda-forge"]
+channels = ["https://prefix.dev/conda-forge", "conda-forge/label/pandas_rc"]
 platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
 
 [tool.pixi.dependencies]
@@ -211,14 +211,10 @@ python = "=3.14"
 
 [tool.pixi.feature.nogil.dependencies]
 python-freethreading = "=3.14"
+pandas = { version = ">=3.0.0rc0", channel = "conda-forge/label/pandas_rc" }
 pytest-run-parallel = "*"
 numpy = "*"
 pshell = "*"
-
-[tool.pixi.feature.nogil.pypi-dependencies]
-# FIXME need pandas 3 for nogil
-pandas = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }
-xarray = "*"
 
 [tool.pixi.feature.mindeps.dependencies]
 python = "=3.9"
@@ -256,6 +252,6 @@ mindeps = { features = ["mindeps", "smoke", "tests"] }
 py39 = { features = ["py39", "smoke", "tests"] }
 py311 = { features = ["py311", "smoke", "tests"] }
 py314 = { features = ["py314", "smoke", "tests"], solve-group = "py314" }
-nogil = { features = ["nogil", "smoke", "tests"], no-default-feature = true }
+nogil = { features = ["nogil", "smoke", "tests"] }
 upstream = { features = ["upstream", "smoke", "tests"], no-default-feature = true }
 smoke = { features = ["smoke"] }
