@@ -205,7 +205,7 @@ ipython = "*"
 ipython = { cmd = "ipython", description = "Launch IPython" }
 
 [tool.pixi.feature.py39.dependencies]
-python = "=3.11"
+python = "=3.9"
 
 [tool.pixi.feature.py311.dependencies]
 python = "=3.11"
