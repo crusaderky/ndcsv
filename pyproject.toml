@@ -53,11 +53,15 @@ build-backend = "hatchling.build"
 [tool.hatch.version]
 source = "vcs"
 
-[tool.pytest.ini_options]
-addopts = "--strict-markers --strict-config -v -r sxfE --color=yes --durations=10"
-xfail_strict = true
+[tool.pytest]
+minversion = "9.0"
+strict = true
+addopts = ["-v", "-r", "sxfE", "--color=yes", "--durations=10"]
 python_files = ["test_*.py"]
 testpaths = ["ndcsv/tests"]
+markers = [
+  "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 filterwarnings = [
   "error",
   # FIXME these need to be looked at
@@ -201,7 +205,7 @@ ipython = "*"
 ipython = { cmd = "ipython", description = "Launch IPython" }
 
 [tool.pixi.feature.py39.dependencies]
-python = "=3.11"
+python = "=3.9"
 
 [tool.pixi.feature.py311.dependencies]
 python = "=3.11"
