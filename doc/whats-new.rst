@@ -3,6 +3,10 @@
 What's New
 ==========
 
+v1.4.0 (unreleased)
+-------------------
+
+
 v1.3.0 (2025-12-30)
 -------------------
 - Added support for recent versions of dependencies
