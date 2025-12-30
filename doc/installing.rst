@@ -13,7 +13,7 @@ Installing with conda
 
 .. code-block:: bash
 
-    conda install ndcsv
+    conda install -c conda-forge ndcsv
 
 
 Installing with pip
