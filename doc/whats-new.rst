@@ -3,9 +3,10 @@
 What's New
 ==========
 
-v1.3.0 (unreleased)
+v1.3.0 (2025-12-30)
 -------------------
 - Added support for recent versions of dependencies
+- Fixed some Pandas warnings
 - Bumped minimum version of dependencies:
 
   ========== ====== ========
@@ -16,8 +17,6 @@ v1.3.0 (unreleased)
   pandas     0.21   1.5
   xarray     0.14   2023.8.0
   ========== ====== ========
-
-- Fixed some Pandas warnings
 
 
 v1.2.0 (2024-03-15)
